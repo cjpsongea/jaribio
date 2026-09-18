@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#8E1B1F">
+<title>CJP — Wholesale & Retail Management</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--accent:#8E1B1F;--dark:#5E0F12;--ink:#241819;--muted:#6E5F5F;--line:#E3DCDA;--panel:rgba(255,255,255,.94);}
+*{box-sizing:border-box} html,body{margin:0;min-height:100%;font-family:Inter,system-ui,sans-serif;color:var(--ink)}
+body{min-height:100vh;background:#f4f1ef;position:relative;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;background-image:var(--local-bg,none);background-size:cover;background-position:center;z-index:-2;filter:saturate(.9);}
+body::after{content:"";position:fixed;inset:0;background:linear-gradient(120deg,rgba(35,8,10,.82),rgba(94,15,18,.72) 42%,rgba(15,20,28,.62));z-index:-1}
+button,input{font:inherit}
+.shell{width:min(1180px,100%);margin:auto;padding:28px 22px 40px}
+.topbar{display:flex;align-items:center;justify-content:space-between;color:#fff;margin-bottom:34px}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-mark{width:48px;height:48px;border-radius:14px;background:#fff;color:var(--accent);display:grid;place-items:center;font:800 1.1rem Archivo;box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.logo h2{margin:0;font:700 1.05rem Archivo} .logo small{opacity:.75;font-size:.7rem}
+.change-bg{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28);color:#fff;padding:9px 13px;border-radius:999px;cursor:pointer}
+.hero{display:grid;grid-template-columns:1.15fr .85fr;gap:28px;align-items:center;color:#fff;margin-bottom:28px}
+.hero h1{font:800 clamp(2.3rem,6vw,4.8rem)/.96 Archivo;margin:0 0 16px;letter-spacing:-.04em}
+.hero p{max-width:650px;font-size:1.02rem;line-height:1.7;margin:0;color:rgba(255,255,255,.88)}
+.badge{display:inline-flex;gap:8px;align-items:center;padding:7px 12px;border-radius:999px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.2);font-size:.76rem;font-weight:700;margin-bottom:15px}
+.login-card{background:var(--panel);border:1px solid rgba(255,255,255,.65);border-radius:24px;padding:26px;box-shadow:0 24px 70px rgba(0,0,0,.28);color:var(--ink);backdrop-filter:blur(14px)}
+.login-card h2{font:700 1.35rem Archivo;margin:0 0 4px} .login-card .sub{font-size:.8rem;color:var(--muted);margin-bottom:18px;display:block}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:13px} label{font-size:.8rem;color:var(--muted);font-weight:600}
+input{width:100%;padding:12px;border:1px solid var(--line);border-radius:11px;outline:none;background:#fff} input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(142,27,31,.1)}
+.pw{position:relative} .pw input{padding-right:62px} .pw button{position:absolute;right:8px;top:7px;border:0;background:transparent;color:var(--accent);font-weight:700;padding:6px;cursor:pointer}
+.error{min-height:20px;color:#B3312C;font-size:.8rem;margin-bottom:5px}
+.signin{width:100%;border:0;border-radius:11px;background:var(--accent);color:#fff;padding:13px;font-weight:800;cursor:pointer} .signin:hover{background:var(--dark)} .signin:disabled{opacity:.55}
+.chooser{display:none;margin-top:18px} .chooser.show{display:block}
+.chooser h3{margin:0 0 5px;font:700 1.15rem Archivo} .chooser p{margin:0 0 15px;color:var(--muted);font-size:.82rem}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.option{border:1px solid var(--line);background:#fff;border-radius:16px;padding:17px;text-align:left;cursor:pointer;transition:.2s}
+.option:hover{transform:translateY(-2px);border-color:var(--accent);box-shadow:0 10px 24px rgba(36,24,25,.1)}
+.option .icon{font-size:1.5rem} .option strong{display:block;font:700 1rem Archivo;margin:7px 0 4px} .option span{font-size:.76rem;color:var(--muted);line-height:1.45}
+.info{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:24px}
+.info-card{color:#fff;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);padding:17px;border-radius:16px;backdrop-filter:blur(8px)}
+.info-card b{display:block;font:700 1rem Archivo;margin-bottom:5px} .info-card span{font-size:.76rem;color:rgba(255,255,255,.78);line-height:1.45}
+.footer{text-align:center;color:rgba(255,255,255,.6);font-size:.72rem;margin-top:28px}
+@media(max-width:820px){.hero{grid-template-columns:1fr}.hero h1{font-size:3rem}.info{grid-template-columns:1fr}}
+@media(max-width:520px){.shell{padding:18px 14px 28px}.topbar{margin-bottom:22px}.change-bg{font-size:.7rem}.options{grid-template-columns:1fr}.login-card{padding:20px}}
+</style>
+</head>
+<body>
+<div class="shell">
+<header class="topbar">
+  <div class="logo"><div class="logo-mark">CJP</div><div><h2>Chriz Jaal Park Company Ltd</h2><small>Wholesale & Retail Management System</small></div></div>
+  <button class="change-bg" id="bgBtn">🖼 Choose background</button>
+  <input id="bgPicker" type="file" accept="image/*" hidden>
+</header>
+
+<section class="hero">
+  <div>
+    <div class="badge">● ONE SYSTEM · TWO SALES CHANNELS</div>
+    <h1>Run your shop from one place.</h1>
+    <p>Welcome to the CJP sales management system. Sign in securely, then choose the workspace you need — <b>Wholesale</b> for volume customers and bulk orders, or <b>Retail</b> for everyday customer sales.</p>
+  </div>
+  <div class="login-card">
+    <h2>Staff sign in</h2>
+    <span class="sub">Use the same shop credentials you already use.</span>
+    <div class="error" id="error"></div>
+    <div class="field"><label for="username">Username</label><input id="username" autocomplete="username" placeholder="Enter your username"></div>
+    <div class="field"><label for="password">Shop password</label><div class="pw"><input id="password" type="password" autocomplete="current-password" placeholder="••••••••"><button id="toggle" type="button">Show</button></div></div>
+    <button class="signin" id="login">Sign in & continue</button>
+    <div class="chooser" id="chooser">
+      <h3>Where would you like to go?</h3><p>Select a workspace. You can return here any time.</p>
+      <div class="options">
+        <button class="option" data-go="wholesale.html" data-mode="wholesale"><div class="icon">📦</div><strong>Wholesale</strong><span>Bulk orders, wholesale pricing, stock and wholesale reports.</span></button>
+        <button class="option" data-go="retail.html" data-mode="retail"><div class="icon">🛍️</div><strong>Retail</strong><span>Everyday sales, retail pricing, stock and retail reports.</span></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="info">
+  <div class="info-card"><b>Wholesale</b><span>Designed for customers purchasing products in volume with wholesale pricing.</span></div>
+  <div class="info-card"><b>Retail</b><span>Designed for direct customer sales with retail pricing and fast checkout.</span></div>
+  <div class="info-card"><b>Connected backend</b><span>Your existing Google Sheet / Apps Script API remains the data and authentication layer.</span></div>
+</div>
+<div class="footer">CJP · Chriz Jaal Park Company Ltd</div>
+</div>
+<script>
+const WHOLESALE_API='https://script.google.com/macros/s/AKfycbyL6_LXfPK09bDGCrbN4wImsEbPTXemNxrJTrnZJt8Nsk69cjeUJliNXcx2c6ujjNQRSg/exec';
+const RETAIL_API='https://script.google.com/macros/s/AKfycbwGi5uqFAa5_Gtl8-4a_ViDqvhbUQ_oMEDnLGqRE-gbbNRZx-3s3VPglfFWEnuevQEd/exec';
+const bgPicker=document.getElementById('bgPicker');
+function applyBg(v){if(v) document.documentElement.style.setProperty('--local-bg','url("'+v.replace(/"/g,'\\"')+'")');}
+try{applyBg(localStorage.getItem('cjp_local_background'));}catch(e){}
+document.getElementById('bgBtn').onclick=()=>bgPicker.click();
+bgPicker.onchange=e=>{
+ const f=e.target.files[0]; if(!f) return;
+ if(f.size>6*1024*1024){document.getElementById('error').textContent='Please choose an image smaller than 6 MB.';return;}
+ const r=new FileReader(); r.onload=()=>{try{localStorage.setItem('cjp_local_background',r.result);applyBg(r.result);}catch(e){}}; r.readAsDataURL(f);
+};
+document.getElementById('toggle').onclick=()=>{
+ const p=document.getElementById('password'),b=document.getElementById('toggle'); p.type=p.type==='password'?'text':'password';b.textContent=p.type==='password'?'Show':'Hide';
+};
+async function apiPost(body){
+ const res=await fetch(WEB_APP_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)});
+ return await res.json();
+}
+async function apiPost(url,body){
+ const res=await fetch(url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)});
+ return await res.json();
+}
+let access={wholesale:false,retail:false};
+async function doLogin(){
+ const username=document.getElementById('username').value.trim().toUpperCase(), password=document.getElementById('password').value, error=document.getElementById('error'), btn=document.getElementById('login');
+ error.textContent='';
+ if(!username){error.textContent='Enter your username to continue.';return}
+ if(!password){error.textContent='Enter your password to continue.';return}
+ btn.disabled=true;btn.textContent='Checking access…';
+ try{
+   const results=await Promise.allSettled([
+     apiPost(WHOLESALE_API,{action:'login',staff:username,password}),
+     apiPost(RETAIL_API,{action:'login',staff:username,password})
+   ]);
+   access.wholesale=results[0].status==='fulfilled' && results[0].value?.ok;
+   access.retail=results[1].status==='fulfilled' && results[1].value?.ok;
+   if(access.wholesale){
+     const r=results[0].value;
+     localStorage.setItem('cjp_wholesale_session',JSON.stringify({staffName:r.staffName||username,token:r.token}));
+   }
+   if(access.retail){
+     const r=results[1].value;
+     localStorage.setItem('cjp_retail_session',JSON.stringify({staffName:r.staffName||username,token:r.token}));
+   }
+   if(!access.wholesale && !access.retail){
+     const r0=results[0].status==='fulfilled'?results[0].value:null;
+     const r1=results[1].status==='fulfilled'?results[1].value:null;
+     error.textContent=(r0?.error||r1?.error||'Login failed. Check your username and password.');
+     return;
+   }
+   document.getElementById('password').value='';
+   document.getElementById('chooser').classList.add('show');
+   document.querySelectorAll('.option').forEach(b=>{
+     const ok=b.dataset.mode==='wholesale'?access.wholesale:access.retail;
+     b.style.display=ok?'block':'none';
+   });
+   btn.style.display='none';
+ }catch(e){error.textContent='Could not reach the sales system backend.';}
+ finally{btn.disabled=false;if(btn.style.display!=='none')btn.textContent='Sign in & continue';}
+}
+document.getElementById('login').onclick=doLogin;
+document.getElementById('password').onkeydown=e=>{if(e.key==='Enter')doLogin()};
+document.querySelectorAll('.option').forEach(b=>b.onclick=()=>location.href=b.dataset.go);
+</script>
+</body></html>
