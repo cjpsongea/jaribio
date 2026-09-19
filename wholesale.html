@@ -115,6 +115,12 @@
   .btn-danger{ color:var(--danger); }
   .btn[disabled]{ opacity:0.5; cursor:not-allowed; }
 
+  .modal-backdrop{ position:fixed; inset:0; background:rgba(20,20,20,.48); display:flex; align-items:center; justify-content:center; padding:18px; z-index:1000; }
+  .modal-backdrop.hide{ display:none; }
+  .modal-card{ width:min(520px,100%); background:#fff; border-radius:14px; box-shadow:0 18px 60px rgba(0,0,0,.22); padding:22px; }
+  .modal-card h3{ margin:0 0 8px; }
+  .warning-box{ padding:12px 14px; border-radius:10px; background:#fff4df; border:1px solid #f0d49a; color:#6b4a12; font-size:.88rem; line-height:1.45; margin:12px 0 16px; }
+  .modal-actions{ display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap; margin-top:16px; }
   .preview-line{ display:flex; justify-content:space-between; padding:5px 0; font-size:0.88rem; color:var(--ink-soft); }
   .preview-line b{ color:var(--ink); font-weight:600; }
 
@@ -205,6 +211,7 @@
     width:100%; margin-top:8px; font-size:0.76rem;
     background:transparent; border:1px solid var(--line); color:var(--ink-soft);
     padding:8px 10px; border-radius:8px; cursor:pointer;
+    display:block; text-align:center; text-decoration:none;
   }
   .btn-password:hover{ color:var(--ink); border-color:var(--ink-soft); }
   .modal-overlay{ position:fixed; inset:0; background:rgba(0,0,0,.45); display:none; align-items:center; justify-content:center; z-index:100; padding:18px; }
@@ -214,28 +221,6 @@
   .modal-card .sub{ color:var(--ink-soft); font-size:.8rem; margin-bottom:16px; display:block; }
   .modal-actions{ display:flex; gap:8px; margin-top:14px; }
   .modal-actions .btn{ flex:1; }
-  #loginOverlay{
-    position:fixed; inset:0; z-index:100; display:flex; align-items:center; justify-content:center;
-    background:
-      radial-gradient(1000px 600px at 15% 10%, rgba(255,255,255,.10), transparent 60%),
-      linear-gradient(150deg, var(--accent-dark) 0%, var(--accent) 60%, #A8474A 100%);
-    padding:20px; overflow-y:auto;
-  }
-  #loginOverlay.hide{ display:none; }
-  .login-card{
-    width:100%; max-width:380px; background:var(--panel); border-radius:18px;
-    padding:26px 24px 24px; box-shadow:0 24px 60px rgba(0,0,0,0.3);
-  }
-  .login-logo{
-    width:84px; height:84px; margin:0 auto 12px; border-radius:20px; background:#fff;
-    display:flex; align-items:center; justify-content:center; overflow:hidden;
-    border:1px solid var(--line);
-  }
-  .login-logo img{ width:100%; height:100%; object-fit:contain; }
-  .login-card h1{ margin:0; font-size:1.3rem; text-align:center; }
-  .login-card .sub{ display:block; text-align:center; font-size:0.82rem; color:var(--ink-soft); margin:4px 0 18px; }
-  .login-card .field{ margin-bottom:12px; }
-  .login-card .btn-primary{ width:100%; margin-top:6px; }
   .login-error{ color:var(--danger); font-size:0.82rem; margin:2px 0 8px; min-height:1em; }
   .seg-label{ font-size:0.8rem; color:var(--ink-soft); margin-bottom:7px; display:block; }
   .pw-wrap{ position:relative; }
@@ -368,7 +353,6 @@
   @media (max-width:430px){
     .cards{ grid-template-columns:1fr; }
     nav button{ font-size:0.67rem; }
-    .login-card{ padding:22px 18px; }
   }
 
   @media (prefers-reduced-motion: reduce){
@@ -386,35 +370,6 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradi
 </head>
 <body>
 
-<!-- ======================= LOGIN ======================= -->
-<div id="loginOverlay">
-  <div class="login-card">
-    <div class="login-logo"><img id="loginLogo" alt="CJP logo" /></div>
-    <h1>CJP</h1>
-    <span class="sub">Chriz Jaal Park Company Ltd · Iringa</span>
-
-    <div class="login-error" id="loginError"></div>
-
-    <div class="field">
-      <label>Access</label>
-      <div class="muted" style="padding:10px 0;">Wholesale staff only</div>
-    </div>
-
-    <div class="field">
-      <label for="loginStaffName">Username</label>
-      <input id="loginStaffName" placeholder="Enter your username" autocomplete="name" />
-    </div>
-    <div class="field">
-      <label for="loginPassword">Shop password</label>
-      <div class="pw-wrap">
-        <input id="loginPassword" type="password" placeholder="••••••••" autocomplete="current-password" />
-        <button type="button" class="pw-toggle" id="pwToggle" aria-label="Show password">Show</button>
-      </div>
-    </div>
-    <button class="btn btn-primary" id="loginSubmit">Sign in</button>
-  </div>
-</div>
-
 <!-- ======================= APP ======================= -->
 <div class="app">
   <aside class="sidebar">
@@ -429,34 +384,10 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradi
     <div class="sidebar-foot">
       <div class="sidebar-user" id="sidebarUser">—</div>
       <input id="staffName" style="display:none;" />
-      <button class="btn-password" id="changePasswordBtn">Change password</button>
+      <a class="btn-password" href="index.html#password-wholesale">Change password</a>
       <button class="btn-logout" id="logoutBtn">Log out</button>
     </div>
   </aside>
-
-  <div class="modal-overlay" id="passwordModal">
-  <div class="modal-card">
-    <h2>Change password</h2>
-    <span class="sub">Change the password for your current staff account.</span>
-    <div class="login-error" id="passwordError"></div>
-    <div class="field">
-      <label for="currentPassword">Current password</label>
-      <input id="currentPassword" type="password" autocomplete="current-password" />
-    </div>
-    <div class="field">
-      <label for="newPassword">New password</label>
-      <input id="newPassword" type="password" autocomplete="new-password" minlength="6" />
-    </div>
-    <div class="field">
-      <label for="confirmPassword">Confirm new password</label>
-      <input id="confirmPassword" type="password" autocomplete="new-password" minlength="6" />
-    </div>
-    <div class="modal-actions">
-      <button class="btn" id="cancelPasswordBtn">Cancel</button>
-      <button class="btn btn-primary" id="savePasswordBtn">Save password</button>
-    </div>
-  </div>
-</div>
 
 <main>
     <header class="site-header">
@@ -546,8 +477,8 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradi
         <h3>Current stock levels</h3>
         <div class="table-scroll">
         <table>
-          <thead><tr><th>Product</th><th>Unit</th><th class="num">Stock</th><th class="num">Buy price</th><th class="num">Wholesale</th><th class="num">Stock value (cost)</th><th class="num">Total profit</th></tr></thead>
-          <tbody id="productsBody"><tr><td colspan="7" class="empty">Loading…</td></tr></tbody>
+          <thead><tr><th>Product</th><th>Unit</th><th class="num">Stock</th><th class="num">Buy price</th><th class="num">Wholesale</th><th class="num">Stock value (cost)</th><th class="num">Total profit</th><th>Action</th></tr></thead>
+          <tbody id="productsBody"><tr><td colspan="8" class="empty">Loading…</td></tr></tbody>
         </table>
         </div>
       </div>
@@ -577,6 +508,23 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradi
                 <input id="saleQty" type="number" min="1" step="1" value="1" inputmode="numeric" />
                 <button type="button" id="qtyPlus" aria-label="Increase quantity">+</button>
               </div>
+            </div>
+            <div class="field">
+              <label>Pricing option</label>
+              <div style="display:flex;gap:14px;align-items:center;padding:8px 0;flex-wrap:wrap;">
+                <label style="display:flex;gap:7px;align-items:center;margin:0;font-weight:500;">
+                  <input type="radio" name="salePriceMode" value="registered" checked>
+                  Use registered price
+                </label>
+                <label style="display:flex;gap:7px;align-items:center;margin:0;font-weight:500;">
+                  <input type="radio" name="salePriceMode" value="manual">
+                  Enter manual price
+                </label>
+              </div>
+            </div>
+            <div class="field">
+              <label for="salePrice">Selling price / unit</label>
+              <input id="salePrice" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Registered price" disabled />
             </div>
             <button class="btn btn-primary" id="addToCart">Add to cart</button>
           </div>
@@ -611,7 +559,7 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradi
             <span class="value" id="sumTotal">0</span>
           </div>
           <button class="btn btn-primary" id="checkoutBtn" style="width:100%; margin-top:14px;">Complete sale</button>
-          <p class="muted" style="font-size:0.8rem; margin:10px 0 0;">Wholesale prices are used for every sale. Stock can be corrected from Stock in.</p>
+          <p class="muted" style="font-size:0.8rem; margin:10px 0 0;">The default wholesale price is only a suggestion. You can change the selling price for each sale; the exact price and profit are saved in SaleLines.</p>
           <div id="lastReceipt"></div>
         </div>
       </div>
@@ -689,11 +637,48 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradi
   </main>
 </div>
 
+
+<div class="modal-backdrop hide" id="productEditModal" role="dialog" aria-modal="true" aria-labelledby="productEditTitle">
+  <div class="modal-card">
+    <h3 id="productEditTitle">Edit product details</h3>
+    <div class="warning-box">
+      <strong>Precaution:</strong> You are about to change saved product information. Please confirm that the product name, unit and prices are correct before continuing. Historical completed sales remain unchanged, but the new values will become the product's current/default details.
+    </div>
+    <input type="hidden" id="editProductId">
+    <div class="form-grid">
+      <div class="field">
+        <label for="editProductName">Product name</label>
+        <input id="editProductName" />
+      </div>
+      <div class="field">
+        <label for="editProductUnit">Unit</label>
+        <input id="editProductUnit" placeholder="pcs, box, bottle…" />
+      </div>
+      <div class="field">
+        <label for="editBuyPrice">Buying price</label>
+        <input id="editBuyPrice" type="number" min="0" step="0.01" />
+      </div>
+      <div class="field">
+        <label for="editWholesalePrice">Wholesale selling price</label>
+        <input id="editWholesalePrice" type="number" min="0" step="0.01" />
+      </div>
+      <div class="field full">
+        <label for="editProductPassword">Your login password</label>
+        <input id="editProductPassword" type="password" autocomplete="current-password" placeholder="Enter your login password" />
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="cancelProductEdit">Cancel</button>
+      <button class="btn btn-primary" id="confirmProductEdit">Confirm &amp; Save</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
 /* ======================= CONFIG ======================= */
-const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyL6_LXfPK09bDGCrbN4wImsEbPTXemNxrJTrnZJt8Nsk69cjeUJliNXcx2c6ujjNQRSg/exec';
+const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxb8HuZHV8INpk4G5YcC4VPNZY9ZhQZezorPLP5YGVQZQdbf0NdnZ_SsZQnk0Zh8BfVeQ/exec';
 
 const COMPANY = {
   name: 'Chriz Jaal Park Company Ltd',
@@ -718,88 +703,15 @@ function getSession(){
 function saveSession(s){ try{ localStorage.setItem(SESSION_KEY, JSON.stringify(s)); }catch(e){} }
 function clearSession(){ try{ localStorage.removeItem(SESSION_KEY); }catch(e){} }
 
-document.getElementById('pwToggle').addEventListener('click', ()=>{
-  const inp = document.getElementById('loginPassword');
-  const btn = document.getElementById('pwToggle');
-  const showing = inp.type === 'text';
-  inp.type = showing ? 'password' : 'text';
-  btn.textContent = showing ? 'Show' : 'Hide';
-  inp.focus();
-});
-
-document.getElementById('loginSubmit').addEventListener('click', doLogin);
-document.getElementById('loginPassword').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
-document.getElementById('loginStaffName').addEventListener('keydown', e=>{ if(e.key==='Enter') document.getElementById('loginPassword').focus(); });
-
-async function doLogin(){
-  const name = document.getElementById('loginStaffName').value.trim().toUpperCase();
-  const pass = document.getElementById('loginPassword').value;
-  const err = document.getElementById('loginError');
-  if(!name){ err.textContent = 'Enter your username to continue.'; return; }
-  if(!pass){ err.textContent = 'Enter your password to continue.'; return; }
-
-  const btn = document.getElementById('loginSubmit');
-  btn.setAttribute('disabled','');
-  try{
-    const r = await apiPost({action:'login', staff:name, password:pass}, false);
-    if(!r.ok){ err.textContent = r.error || 'Login failed.'; return; }
-    err.textContent = '';
-    const session = { staffName: r.staffName || name, token: r.token };
-    saveSession(session);
-    document.getElementById('loginPassword').value = '';
-    enterApp(session);
-  }catch(e){
-    err.textContent = 'Could not reach the Google Sheet backend.';
-  }finally{
-    btn.removeAttribute('disabled');
-  }
-}
-
 document.getElementById('logoutBtn').addEventListener('click', ()=>{
   clearSession();
   currentSession = null;
-  document.querySelector('.app').classList.remove('show');
-  document.getElementById('loginOverlay').classList.remove('hide');
-  document.getElementById('loginStaffName').value = '';
-  document.getElementById('loginPassword').value = '';
+  try{ localStorage.setItem('cjp_last_role','wholesale'); }catch(e){}
+  location.href = 'index.html';
 });
-
-document.getElementById('changePasswordBtn').addEventListener('click', ()=>{
-  document.getElementById('passwordError').textContent='';
-  ['currentPassword','newPassword','confirmPassword'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('passwordModal').classList.add('show');
-  document.getElementById('currentPassword').focus();
-});
-document.getElementById('cancelPasswordBtn').addEventListener('click', ()=>{
-  document.getElementById('passwordModal').classList.remove('show');
-});
-document.getElementById('passwordModal').addEventListener('click', e=>{
-  if(e.target.id==='passwordModal') e.currentTarget.classList.remove('show');
-});
-document.getElementById('savePasswordBtn').addEventListener('click', changePassword);
-async function changePassword(){
-  const current = document.getElementById('currentPassword').value;
-  const next = document.getElementById('newPassword').value;
-  const confirm = document.getElementById('confirmPassword').value;
-  const err = document.getElementById('passwordError');
-  if(!current || !next || !confirm){ err.textContent='Complete all password fields.'; return; }
-  if(next.length < 6){ err.textContent='New password must be at least 6 characters.'; return; }
-  if(next !== confirm){ err.textContent='New passwords do not match.'; return; }
-  if(current === next){ err.textContent='New password must be different from the current password.'; return; }
-  const btn=document.getElementById('savePasswordBtn');
-  btn.disabled=true; err.textContent='';
-  try{
-    const r=await apiPost({action:'changePassword', currentPassword:current, newPassword:next});
-    if(!r.ok){ err.textContent=r.error || 'Could not change password.'; return; }
-    document.getElementById('passwordModal').classList.remove('show');
-    showToast('Password changed successfully.');
-  }catch(e){ err.textContent='Could not reach the Google Sheet backend.'; }
-  finally{ btn.disabled=false; }
-}
 
 function enterApp(session){
   currentSession = session;
-  document.getElementById('loginOverlay').classList.add('hide');
   document.querySelector('.app').classList.add('show');
   document.getElementById('staffName').value = session.staffName;
   document.getElementById('sidebarUser').innerHTML =
@@ -896,9 +808,11 @@ async function apiPost(body, includeAuth=true){
 function forceLogout(message){
   clearSession();
   currentSession = null;
-  document.querySelector('.app').classList.remove('show');
-  document.getElementById('loginOverlay').classList.remove('hide');
-  document.getElementById('loginError').textContent = message;
+  try{
+    sessionStorage.setItem('cjp_login_notice', JSON.stringify({role:'wholesale', message:message}));
+    localStorage.setItem('cjp_last_role','wholesale');
+  }catch(e){}
+  location.replace('index.html');
 }
 
 /* ======================= nav ======================= */
@@ -1023,8 +937,8 @@ async function loadProducts(){
 function renderProductsTable(){
   const body = document.getElementById('productsBody');
   body.innerHTML = productsCache.map(p=>{
-    const stockValue = (Number(p.stock)||0) * (Number(p.buyPrice)||0);
-    const totalProfit = Number(p.totalProfit) || ((Number(p.stock)||0) * ((Number(p.wholesalePrice)||0) - (Number(p.buyPrice)||0)));
+    const stockValue = Number(p.stockCost) || ((Number(p.stock)||0) * (Number(p.buyPrice)||0));
+    const totalProfit = Number(p.totalProfit) || ((Number(p.stock)||0) * (Number(p.wholesalePrice)||0) - stockValue);
     return `
     <tr>
       <td>${p.name}</td><td>${p.unit}</td>
@@ -1039,15 +953,99 @@ function renderProductsTable(){
       <td class="num">${money(p.wholesalePrice)}</td>
       <td class="num">${money(stockValue)}</td>
       <td class="num"><b>${money(totalProfit)}</b></td>
+      <td><button class="btn btn-ghost product-edit" data-id="${p.id}" style="padding:6px 10px; font-size:0.78rem;">Edit</button></td>
     </tr>`;
-  }).join('') || '<tr><td colspan="7" class="empty">No products yet. Add one from the form above.</td></tr>';
+  }).join('') || '<tr><td colspan="8" class="empty">No products yet. Add one from the form above.</td></tr>';
 
   body.querySelectorAll('.stock-save').forEach(btn=>{
     btn.addEventListener('click', ()=>saveStockEdit(btn.dataset.id));
   });
+  body.querySelectorAll('.product-edit').forEach(btn=>{
+    btn.addEventListener('click', ()=>openProductEdit(btn.dataset.id));
+  });
   body.querySelectorAll('input[data-id]').forEach(input=>{
     input.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') saveStockEdit(input.dataset.id); });
   });
+}
+
+function openProductEdit(productId){
+  const p = productsCache.find(x=>x.id===productId);
+  if(!p) return;
+  document.getElementById('editProductId').value = p.id;
+  document.getElementById('editProductName').value = p.name || '';
+  document.getElementById('editProductUnit').value = p.unit || '';
+  document.getElementById('editBuyPrice').value = Number(p.buyPrice)||0;
+  document.getElementById('editWholesalePrice').value = Number(p.wholesalePrice)||0;
+  document.getElementById('editProductPassword').value = '';
+  document.getElementById('productEditModal').classList.remove('hide');
+  setTimeout(()=>document.getElementById('editProductPassword').focus(),50);
+}
+
+function closeProductEdit(){
+  document.getElementById('productEditModal').classList.add('hide');
+  document.getElementById('editProductPassword').value = '';
+}
+
+document.getElementById('cancelProductEdit').addEventListener('click', closeProductEdit);
+document.getElementById('productEditModal').addEventListener('click', e=>{
+  if(e.target.id === 'productEditModal') closeProductEdit();
+});
+
+// IMPORTANT: the save handler must be explicitly connected to the button.
+// Without this listener the modal opens correctly, but clicking
+// "Confirm & Save" does nothing.
+document.getElementById('confirmProductEdit').addEventListener('click', confirmProductEdit);
+document.getElementById('editProductPassword').addEventListener('keydown', e=>{
+  if(e.key === 'Enter'){
+    e.preventDefault();
+    confirmProductEdit();
+  }
+});
+
+async function confirmProductEdit(){
+  const productId = document.getElementById('editProductId').value;
+  const name = document.getElementById('editProductName').value.trim();
+  const unit = document.getElementById('editProductUnit').value.trim();
+  const buyPrice = Number(document.getElementById('editBuyPrice').value);
+  const wholesalePrice = Number(document.getElementById('editWholesalePrice').value);
+  const password = document.getElementById('editProductPassword').value;
+
+  if(!name){ showToast('Product name is required.', true); return; }
+  if(!Number.isFinite(buyPrice) || buyPrice < 0 || !Number.isFinite(wholesalePrice) || wholesalePrice < 0){
+    showToast('Enter valid non-negative prices.', true); return;
+  }
+  if(!password){ showToast('Enter your login password to continue.', true); return; }
+
+  const btn = document.getElementById('confirmProductEdit');
+  btn.setAttribute('disabled','');
+  btn.textContent = 'Checking password…';
+  try {
+    const r = await apiPost({
+      action:'editProduct',
+      productId,
+      name,
+      unit,
+      buyPrice,
+      wholesalePrice,
+      password,
+      staff: document.getElementById('staffName').value.trim()
+    });
+
+    if(!r.ok){
+      showToast(r.error || 'Product details were not changed.', true);
+      document.getElementById('editProductPassword').focus();
+      return;
+    }
+
+    closeProductEdit();
+    showToast(`Product details updated for ${r.product.name}.`);
+    await loadProducts();
+  } catch (e) {
+    showToast('Could not save the product. Check the connection and try again.', true);
+  } finally {
+    btn.removeAttribute('disabled');
+    btn.textContent = 'Confirm & Save';
+  }
 }
 
 async function saveStockEdit(productId){
@@ -1158,7 +1156,7 @@ function loadProductDetails(){
   body.innerHTML = productsCache.map(p=>{
     const qty=Number(p.stock)||0, buy=Number(p.buyPrice)||0;
     const wholesale=Number(p.wholesalePrice)||0;
-    const costValue=qty*buy, wholesaleValue=qty*wholesale, profitValue=wholesaleValue-costValue;
+    const costValue=Number(p.stockCost)||qty*buy, wholesaleValue=qty*wholesale, profitValue=wholesaleValue-costValue;
     totalQty+=qty; totalCost+=costValue; totalWholesale+=wholesaleValue; totalProfit+=profitValue;
     return `<tr>
       <td>${p.name}</td><td>${p.unit}</td><td class="num">${money(qty)}</td>
@@ -1179,19 +1177,51 @@ function loadProductDetails(){
 let customerType = 'wholesale';
 let cart = [];
 
+function getSalePriceMode(){
+  return document.querySelector('input[name="salePriceMode"]:checked')?.value || 'registered';
+}
+
+function updateSalePriceMode(){
+  const mode = getSalePriceMode();
+  const priceInput = document.getElementById('salePrice');
+  const p = productsCache.find(p=>p.id === document.getElementById('saleProduct').value);
+  if(mode === 'registered') {
+    priceInput.disabled = true;
+    priceInput.placeholder = 'Registered price';
+    priceInput.value = p ? (Number(p.wholesalePrice)||0) : '';
+  } else {
+    priceInput.disabled = false;
+    priceInput.placeholder = 'Enter selling price';
+    if(p && (!priceInput.value || Number(priceInput.value) === Number(p.wholesalePrice))) priceInput.value = '';
+  }
+  updatePriceHint();
+}
+
 function updatePriceHint(){
   const hint = document.getElementById('priceHint');
   const p = productsCache.find(p=>p.id === document.getElementById('saleProduct').value);
+  const mode = getSalePriceMode();
   if(!p){ hint.textContent = 'Choose a product to see its wholesale price.'; return; }
   const qty = Math.max(1, Number(document.getElementById('saleQty').value)||1);
-  const unitPrice = Number(p.wholesalePrice)||0;
+  const priceInput = document.getElementById('salePrice');
+  const unitPrice = mode === 'registered' ? (Number(p.wholesalePrice)||0) : Number(priceInput.value);
+  const priceText = Number.isFinite(unitPrice) && unitPrice >= 0 ? money(unitPrice) : '—';
   hint.innerHTML = `
-    <span>${p.name} · ${money(unitPrice)} per ${p.unit} · ${p.stock} in stock</span>
-    <span>Line total <b>${money(unitPrice*qty)}</b> · Profit <b>${money((unitPrice-(Number(p.buyPrice)||0))*qty)}</b></span>`;
+    <span>${p.name} · registered ${money(p.wholesalePrice||0)} · ${p.stock} in stock</span>
+    <span>${mode === 'registered' ? 'Registered price selected' : 'Manual price selected'} · Line total <b>${priceText === '—' ? '—' : money(unitPrice*qty)}</b> · Estimated profit <b>${priceText === '—' ? '—' : money((unitPrice-(Number(p.buyPrice)||0))*qty)}</b></span>`;
 }
 
-document.getElementById('saleProduct').addEventListener('change', updatePriceHint);
+document.getElementById('saleProduct').addEventListener('change', ()=>{
+  const mode = getSalePriceMode();
+  const priceInput = document.getElementById('salePrice');
+  const p = productsCache.find(p=>p.id === document.getElementById('saleProduct').value);
+  if(mode === 'registered') priceInput.value = p ? (Number(p.wholesalePrice)||0) : '';
+  else priceInput.value = '';
+  updatePriceHint();
+});
 document.getElementById('saleQty').addEventListener('input', updatePriceHint);
+document.getElementById('salePrice').addEventListener('input', updatePriceHint);
+document.querySelectorAll('input[name="salePriceMode"]').forEach(r=>r.addEventListener('change', updateSalePriceMode));
 document.getElementById('qtyMinus').addEventListener('click', ()=>stepQty(-1));
 document.getElementById('qtyPlus').addEventListener('click', ()=>stepQty(1));
 function stepQty(delta){
@@ -1204,15 +1234,22 @@ document.getElementById('addToCart').addEventListener('click', ()=>{
   const id = document.getElementById('saleProduct').value;
   const qty = Number(document.getElementById('saleQty').value);
   const p = productsCache.find(p=>p.id===id);
+  const mode = getSalePriceMode();
+  const priceInput = document.getElementById('salePrice');
+  const unitPrice = mode === 'registered' ? Number(p?.wholesalePrice) : Number(priceInput.value);
   if(!p || !qty || qty<=0){ showToast('Choose a product and a quantity of at least one.', true); return; }
-  const unitPrice = Number(p.wholesalePrice)||0;
-  const existing = cart.find(c=>c.productId===p.id);
-  if(existing){ existing.qty += qty; }
-  else { cart.push({productId:p.id, name:p.name, unit:p.unit, qty, customerType:'wholesale', unitPrice, buyPrice:Number(p.buyPrice)||0}); }
+  if(!Number.isFinite(unitPrice) || unitPrice < 0){ showToast('Enter a valid manual selling price.', true); return; }
+  if(qty > Number(p.stock||0)){ showToast(`${p.name}: not enough stock.`, true); return; }
+  const existing = cart.find(c=>c.productId===p.id && Number(c.unitPrice)===unitPrice && c.priceMode===mode);
+  if(existing){
+    existing.qty += qty;
+  } else {
+    cart.push({productId:p.id, name:p.name, unit:p.unit, qty, customerType:'wholesale', unitPrice, priceMode:mode, buyPrice:Number(p.buyPrice)||0});
+  }
   document.getElementById('saleQty').value = 1;
-  updatePriceHint();
-  renderCart();
-  showToast(`${qty} × ${p.name} added to the cart.`);
+  if(mode === 'manual') priceInput.value = '';
+  updatePriceHint(); renderCart();
+  showToast(`${qty} × ${p.name} added at ${money(unitPrice)} per ${p.unit}.`);
 });
 
 document.getElementById('clearCart').addEventListener('click', ()=>{
@@ -1230,13 +1267,25 @@ function renderCart(){
       <tr>
         <td class="cart-name">${c.name}</td>
         <td class="num" data-label="Qty">${c.qty} ${c.unit||''}</td>
-        <td class="num" data-label="Unit price">${money(c.unitPrice)}</td>
+        <td class="num" data-label="Unit price">
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;">
+            <input class="cart-price" data-i="${i}" type="number" min="0" step="0.01" value="${c.unitPrice}" ${c.priceMode==='registered'?'disabled':''} style="width:105px;padding:6px 7px;text-align:right;" />
+            <small class="muted">${c.priceMode==='registered'?'Registered':'Manual'}</small>
+          </div>
+        </td>
         <td class="num" data-label="Line total"><b>${money(c.unitPrice*c.qty)}</b></td>
         <td class="num" data-label="Profit"><b>${money(((c.unitPrice-(Number(c.buyPrice)||0))*c.qty))}</b></td>
-        <td class="cart-remove"><button class="btn btn-ghost btn-danger" data-i="${i}" style="padding:5px 12px; font-size:0.8rem;">Remove</button></td>
+        <td class="cart-remove"><button class="btn btn-ghost btn-danger" data-remove="${i}" style="padding:5px 12px;font-size:0.8rem;">Remove</button></td>
       </tr>`).join('');
-    body.querySelectorAll('button[data-i]').forEach(b=>{
-      b.addEventListener('click', ()=>{ cart.splice(Number(b.dataset.i),1); renderCart(); });
+    body.querySelectorAll('.cart-price:not(:disabled)').forEach(input=>{
+      input.addEventListener('change', ()=>{
+        const i=Number(input.dataset.i), v=Number(input.value);
+        if(!Number.isFinite(v) || v<0){ showToast('Enter a valid selling price.', true); renderCart(); return; }
+        cart[i].unitPrice=v; cart[i].priceMode='manual'; renderCart();
+      });
+    });
+    body.querySelectorAll('button[data-remove]').forEach(b=>{
+      b.addEventListener('click', ()=>{ cart.splice(Number(b.dataset.remove),1); renderCart(); });
     });
   }
   const total = cart.reduce((s,c)=>s+c.unitPrice*c.qty,0);
@@ -1254,24 +1303,29 @@ document.getElementById('checkoutBtn').addEventListener('click', async ()=>{
   const payload = {
     action:'recordSale',
     staff: document.getElementById('staffName').value.trim(),
-    items: cart.map(c=>({productId:c.productId, qty:c.qty}))
+    items: cart.map(c=>({productId:c.productId, qty:c.qty, unitPrice:Number(c.unitPrice), priceMode:c.priceMode}))
   };
   const btn = document.getElementById('checkoutBtn');
   btn.setAttribute('disabled','');
-  const r = await apiPost(payload);
-  btn.removeAttribute('disabled');
-  if(!r.ok){ showToast(r.error||'The sale did not go through. Try again.', true); return; }
-  showToast(`Wholesale sale completed — total ${money(r.total)} · profit ${money(r.totalProfit)}.`);
-  document.getElementById('lastReceipt').innerHTML = `
-    <div class="receipt">
-      <strong>Receipt ${r.saleId}</strong>
-      <table style="min-width:0; margin-top:8px;"><tr><th>Product</th><th class="num">Qty</th><th class="num">Sale</th><th class="num">Profit</th></tr>${r.lines.map(l=>`<tr><td>${l.name}</td><td class="num">${l.qty}</td><td class="num">${money(l.lineTotal)}</td><td class="num">${money(l.profit)}</td></tr>`).join('')}</table>
-      <div class="summary-row"><span>Total profit</span><b>${money(r.totalProfit)}</b></div>
-      <div class="cart-total"><span class="muted">Total</span><span class="value">${money(r.total)}</span></div>
-    </div>`;
-  cart = [];
-  renderCart();
-  loadProducts();
+  try {
+    const r = await apiPost(payload);
+    if(!r.ok){ showToast(r.error||'The sale did not go through. Try again.', true); return; }
+    showToast(`Wholesale sale completed — total ${money(r.total)} · profit ${money(r.totalProfit)}.`);
+    document.getElementById('lastReceipt').innerHTML = `
+      <div class="receipt">
+        <strong>Receipt ${r.saleId}</strong>
+        <table style="min-width:0; margin-top:8px;"><tr><th>Product</th><th class="num">Qty</th><th class="num">Sale</th><th class="num">Profit</th></tr>${r.lines.map(l=>`<tr><td>${l.name}</td><td class="num">${l.qty}</td><td class="num">${money(l.lineTotal)}</td><td class="num">${money(l.profit)}</td></tr>`).join('')}</table>
+        <div class="summary-row"><span>Total profit</span><b>${money(r.totalProfit)}</b></div>
+        <div class="cart-total"><span class="muted">Total</span><span class="value">${money(r.total)}</span></div>
+      </div>`;
+    cart = [];
+    renderCart();
+    loadProducts();
+  } catch(err) {
+    showToast(err?.message || 'The sale did not go through. Try again.', true);
+  } finally {
+    btn.removeAttribute('disabled');
+  }
 });
 
 /* ======================= reports ======================= */
@@ -1339,7 +1393,9 @@ async function loadReports(period, selectedDate){
   if(existing && existing.token && existing.staffName){
     enterApp(existing);
   } else {
-    document.getElementById('loginOverlay').classList.remove('hide');
+    try{ localStorage.setItem('cjp_last_role','wholesale'); }catch(e){}
+    location.replace('index.html');
+    return;
   }
   renderCart();
 })();
