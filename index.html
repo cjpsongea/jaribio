@@ -908,12 +908,18 @@ $('staffPass').addEventListener('keydown', e=>{ if(e.key==='Enter') signIn(); })
 $('signInBtn').addEventListener('click', signIn);
 
 async function signIn(){
-  const name = $('staffUser').value.trim().toUpperCase();
+  /* Username must be exactly: first letter uppercase, all remaining letters lowercase.
+     Example: Udidi = valid; udidi / UDIDI / UDiDi = invalid. */
+  const name = $('staffUser').value.trim();
+  $('staffUser').value = name;
   const pass = $('staffPass').value;
   const note = $('loginNote');
   note.className = 'form-note';
-  if(!name){ note.textContent = 'Enter your username to continue.'; return; }
-  if(!pass){ note.textContent = 'Enter your password to continue.'; return; }
+
+  if(!name || !pass || !/^[A-Z][a-z]*$/.test(name)){
+    note.textContent = 'Incorrect login';
+    return;
+  }
 
   const btn = $('signInBtn');
   btn.setAttribute('disabled',''); btn.textContent = 'Signing in…';
