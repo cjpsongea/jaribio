@@ -638,6 +638,27 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradi
 </div>
 
 
+<div class="modal-overlay" id="stockSavePasswordModal" role="dialog" aria-modal="true" aria-labelledby="stockSavePasswordTitle">
+  <div class="modal-card">
+    <h2 id="stockSavePasswordTitle">Confirm stock saving</h2>
+    <span class="sub">Enter your login password to save the stock received.</span>
+    <div class="warning-box">
+      <strong>Precaution:</strong> Please confirm the stock quantity, buying price and retail selling price before continuing.
+    </div>
+    <div class="field">
+      <label for="stockSavePassword">Your login password</label>
+      <div class="pw-wrap">
+        <input id="stockSavePassword" type="password" autocomplete="current-password" placeholder="Enter your login password" />
+        <button type="button" class="pw-toggle" id="stockSavePasswordToggle">Show</button>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="cancelStockSave">Cancel</button>
+      <button class="btn btn-primary" id="confirmStockSave">Confirm &amp; Save</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-backdrop hide" id="productEditModal" role="dialog" aria-modal="true" aria-labelledby="productEditTitle">
   <div class="modal-card">
     <h3 id="productEditTitle">Edit product details</h3>
@@ -1090,7 +1111,41 @@ function updateRegPreview(){
   document.getElementById('prevProfit').textContent = money(qty*(retail-buy));
 }
 
-document.getElementById('regSubmit').addEventListener('click', async ()=>{
+let pendingStockSavePayload = null;
+
+function openStockSavePassword(payload){
+  pendingStockSavePayload = payload;
+  const modal = document.getElementById('stockSavePasswordModal');
+  const pw = document.getElementById('stockSavePassword');
+  pw.value = '';
+  pw.type = 'password';
+  document.getElementById('stockSavePasswordToggle').textContent = 'Show';
+  modal.classList.add('show');
+  setTimeout(()=>pw.focus(), 0);
+}
+
+function closeStockSavePassword(){
+  document.getElementById('stockSavePasswordModal').classList.remove('show');
+  document.getElementById('stockSavePassword').value = '';
+  pendingStockSavePayload = null;
+}
+
+document.getElementById('cancelStockSave').addEventListener('click', closeStockSavePassword);
+document.getElementById('stockSavePasswordModal').addEventListener('click', e=>{
+  if(e.target.id === 'stockSavePasswordModal') closeStockSavePassword();
+});
+document.getElementById('stockSavePasswordToggle').addEventListener('click', ()=>{
+  const pw = document.getElementById('stockSavePassword');
+  const show = pw.type === 'password';
+  pw.type = show ? 'text' : 'password';
+  document.getElementById('stockSavePasswordToggle').textContent = show ? 'Hide' : 'Show';
+});
+document.getElementById('stockSavePassword').addEventListener('keydown', e=>{
+  if(e.key === 'Enter') document.getElementById('confirmStockSave').click();
+  if(e.key === 'Escape') closeStockSavePassword();
+});
+
+document.getElementById('regSubmit').addEventListener('click', ()=>{
   const el = document.getElementById('regProduct');
   const isNew = el.tagName === 'INPUT';
   const payload = {
@@ -1106,11 +1161,30 @@ document.getElementById('regSubmit').addEventListener('click', async ()=>{
   if(!payload.qty || (!payload.productId && !payload.name)){
     showToast('Choose a product and enter a quantity above zero.', true); return;
   }
-  const btn = document.getElementById('regSubmit');
+  openStockSavePassword(payload);
+});
+
+document.getElementById('confirmStockSave').addEventListener('click', async ()=>{
+  if(!pendingStockSavePayload) return;
+  const password = document.getElementById('stockSavePassword').value;
+  if(!password){
+    showToast('Enter your login password to save stock.', true);
+    document.getElementById('stockSavePassword').focus();
+    return;
+  }
+
+  const payload = {...pendingStockSavePayload, password};
+  const btn = document.getElementById('confirmStockSave');
   btn.setAttribute('disabled','');
   const r = await apiPost(payload);
   btn.removeAttribute('disabled');
-  if(!r.ok){ showToast(r.error||'The stock did not save. Try again.', true); return; }
+
+  if(!r.ok){
+    showToast(r.error||'The stock did not save. Try again.', true);
+    return;
+  }
+
+  closeStockSavePassword();
   showToast(`Saved ${payload.qty} × ${r.product.name} to stock · expected profit ${money(r.product.expectedProfit || 0)}.`);
   ['regQty','regBuy','regRetailPrice'].forEach(id=>document.getElementById(id).value='');
   updateRegPreview();
