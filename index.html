@@ -462,6 +462,19 @@
     .lead-intro h2{ font-size:1.45rem; }
   }
 
+
+/* === CJP professional landing-page refinement === */
+body{line-height:1.5}
+.wrap{max-width:1240px}
+.site-header{box-shadow:0 10px 28px rgba(var(--accent-dark-rgb),.14)}
+.card-panel{box-shadow:0 8px 28px rgba(var(--ink-rgb),.08)}
+.shop{transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease}
+.shop:hover{box-shadow:0 5px 16px rgba(var(--ink-rgb),.07)}
+input,select{transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus{box-shadow:0 0 0 3px rgba(var(--accent-rgb),.09)}
+@media(max-width:760px){.wrap{padding:14px 14px 0}.lead{grid-template-columns:1fr}.card-panel{position:static}.hero-gallery{height:280px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
+
 </style>
 </head>
 <body>
@@ -644,12 +657,12 @@ const SHOPS = {
   retail: {
     label: 'Retail counter',
     page: 'CJP_Retail_Frontend_Updated.html',
-    url: 'https://script.google.com/macros/s/AKfycbyU4tbiT4kDraGhR7YPtShiFmlE34ZCKyLzNrh7VmRZvbX12l2KFWyq6fvpjmFQnLtz/exec'
+    url: 'https://script.google.com/macros/s/AKfycbwBxbYs5R3U0yAtZwk6SLo-ErLBzWjymaknqjxKHX6FY_OXFtfFVgdsVIQQ3b7NiCSq/exec'
   },
   wholesale: {
     label: 'Wholesale store',
     page: 'CJP_Wholesale_Frontend_Updated.html',
-    url: 'https://script.google.com/macros/s/AKfycbz9Sy2vlNRnrOmB-ihh5fM-qX3mYmC2U4MWe4de9pvEI0jBrtzLSXcvJ3p33KNvoqJtrA/exec'
+    url: 'https://script.google.com/macros/s/AKfycbzUCQrrOypi7-JzVjMOWs7Wfn5CTLuzmo1ONlAZrWZi4HMIaTKKOo9oRBPujzS997o9fw/exec'
   }
 };
 
