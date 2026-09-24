@@ -296,93 +296,6 @@
   .logo-tile .initials{ font-family:'Archivo',sans-serif; font-weight:700; font-size:1.3rem; color:var(--accent); }
   #logoPicker{ display:none; }
 
-  /* ---- Laptop / small desktop ---- */
-  @media (max-width:1180px){
-    main{ padding:22px 24px 40px; }
-    .sales-layout{ grid-template-columns:minmax(0,1.3fr) minmax(280px,1fr); gap:16px; }
-  }
-  @media (max-width:980px){
-    .sales-layout{ grid-template-columns:1fr; }
-    .sell-side{ position:static; }
-    .sidebar{ width:196px; }
-  }
-
-  /* ---- Mobile ---- */
-  @media (max-width:800px){
-    body{ padding-bottom:70px; }
-    .app{ flex-direction:column; min-height:auto; }
-
-    .sidebar{
-      width:100%; height:auto; flex-direction:row; align-items:center; justify-content:space-between;
-      padding:10px 14px; gap:10px; position:sticky; top:0; z-index:40;
-      border-right:none; border-bottom:1px solid var(--line);
-      padding-top:calc(10px + env(safe-area-inset-top));
-    }
-    .brand{ padding:0; font-size:1rem; }
-    .brand small{ font-size:0.6rem; }
-    .sidebar-foot{ margin-top:0; padding:0; border-top:none; text-align:right; }
-    .sidebar-user{ font-size:0.78rem; margin-bottom:0; }
-    .btn-logout{ margin-top:2px; font-size:0.72rem; }
-
-    nav{
-      position:fixed; left:0; right:0; bottom:0; z-index:40; margin-top:0;
-      flex-direction:row; background:var(--panel); border-top:1px solid var(--line);
-      padding:6px 4px calc(6px + env(safe-area-inset-bottom));
-      gap:2px; box-shadow:0 -2px 12px rgba(36,24,25,0.06);
-    }
-    nav button{ flex:1; text-align:center; padding:9px 4px; font-size:0.72rem; border-radius:9px; }
-
-    main{ padding:14px 14px 24px; max-width:100%; }
-    .page-head{ flex-direction:column; align-items:flex-start; gap:2px; }
-    .page-head h1{ font-size:1.25rem; }
-
-    .site-header{ padding:14px 14px; gap:12px; border-radius:12px; margin-bottom:16px; }
-    .logo-tile{ width:54px; height:54px; border-radius:14px; }
-    .header-main h1{ font-size:1.1rem; }
-    .header-main .tagline{ font-size:0.74rem; }
-    .contact-strip{ gap:6px; margin-top:9px; }
-    .contact-strip a, .contact-strip span{ font-size:0.68rem; padding:4px 9px; }
-
-    .cards{ grid-template-columns:repeat(2,1fr); gap:10px; }
-    .card{ padding:12px 13px; }
-    .card .value{ font-size:1.15rem; }
-
-    .panel{ padding:14px; }
-    .picker{ grid-template-columns:1fr; gap:10px; }
-    .picker .stepper{ width:100%; justify-content:space-between; }
-    .picker .stepper input{ flex:1; }
-    .picker .btn-primary{ width:100%; }
-
-    /* Cart becomes stacked rows on phones */
-    #cartTable{ min-width:0; }
-    #cartTable thead{ display:none; }
-    #cartTable tr{ display:block; border:1px solid var(--line); border-radius:10px; padding:10px 12px; margin-bottom:10px; }
-    #cartTable td{ display:flex; justify-content:space-between; gap:12px; border:none; padding:3px 0; font-size:0.88rem; }
-    #cartTable td::before{ content:attr(data-label); color:var(--ink-soft); font-size:0.78rem; }
-    #cartTable td.cart-name{ font-weight:600; font-size:0.95rem; padding-bottom:6px; }
-    #cartTable td.cart-name::before{ content:none; }
-    #cartTable td.cart-remove{ justify-content:flex-end; padding-top:6px; }
-    #cartTable td.cart-remove::before{ content:none; }
-    #cartTable tr.empty-row{ border:none; padding:0; }
-
-    .hero{ height:165px; margin-bottom:16px; }
-    .slide{ padding:0 18px; }
-    .slide .txt{ max-width:78%; }
-    .slide .txt h2{ font-size:1.1rem; }
-    .slide .txt p{ font-size:0.8rem; }
-
-    .seg button{ font-size:0.78rem; padding:9px 6px; }
-    .tabs{ overflow-x:auto; padding-bottom:2px; flex-wrap:nowrap; }
-    .tabs button{ white-space:nowrap; }
-
-    input, select, .btn{ font-size:1rem; }
-    .toast{ left:14px; right:14px; bottom:80px; max-width:none; }
-  }
-
-  @media (max-width:430px){
-    .cards{ grid-template-columns:1fr; }
-    nav button{ font-size:0.67rem; }
-  }
 
   @media (prefers-reduced-motion: reduce){
     .slide{ transition:none; }
@@ -423,24 +336,233 @@ input:focus,select:focus{box-shadow:0 0 0 3px rgba(142,27,31,.09)}
 .btn:active{transform:translateY(1px)}
 /* The rotating promo banner duplicated the dashboard's KPI and activity focus. */
 #page-home > .hero{display:none}
-@media(max-width:900px){.sales-layout{grid-template-columns:1fr}.sell-side{position:static}}
-@media(max-width:720px){
- .app.show{display:block}
- .sidebar{position:relative;width:100%;height:auto;padding:14px;border-right:0;border-bottom:1px solid var(--line)}
- nav{display:flex;flex-direction:row;overflow-x:auto;margin-top:12px;padding-bottom:3px}
- nav button{white-space:nowrap;flex:0 0 auto}
- .sidebar-foot{margin-top:14px}
- main{padding:18px 14px 32px}
- .page-head h1{font-size:1.45rem}
- .cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
- .card{padding:14px}
- .card .value{font-size:1.25rem}
- .panel{padding:15px}
- .picker{grid-template-columns:1fr 1fr}
- .picker .field:first-child{grid-column:1/-1}
-}
-@media(max-width:420px){.cards{grid-template-columns:1fr}.picker{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
+
+
+/* ==========================================================================
+   RESPONSIVE LAYER
+   Laptop / desktop  : 901px and up  -> left sidebar, multi-column pages
+   Tablet / phone    : 900px and down -> top bar + bottom tab bar
+   Phone             : 700px and down -> tables become stacked cards
+   (This block replaces the older overlapping media queries.)
+   ========================================================================== */
+:root{ --paper:#fff; --nav-h:64px; }
+html{ scroll-padding-top:76px; }
+
+/* ---- Base / laptop ---- */
+.app.show{ display:flex; }
+.sidebar{
+  backdrop-filter:none;              /* keeps the fixed bottom nav anchored to the screen on phones */
+  height:100vh; height:100dvh; overflow-y:auto;
+}
+main{ min-width:0; margin-inline:auto; }
+.page-head > .muted{ max-width:100%; }
+
+nav button{ display:flex; align-items:center; gap:10px; }
+nav button .ic{ width:19px; height:19px; flex-shrink:0; }
+.hide-sm{ display:inline; }
+
+.card .value{ overflow-wrap:anywhere; }
+.cards{ grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); }
+#homeCards{ grid-template-columns:repeat(3,minmax(0,1fr)); }
+
+table.stack{ min-width:640px; }
+.bars{ height:170px; overflow-x:auto; padding-bottom:2px; }
+.bar-col{ min-width:28px; }
+
+input[type="radio"], input[type="checkbox"]{
+  width:18px; height:18px; min-height:0; padding:0; flex-shrink:0; accent-color:var(--accent);
+}
+
+/* Sell page: product + quantity, pricing option + price, then the add button */
+.picker{ grid-template-columns:repeat(12,minmax(0,1fr)); gap:14px; }
+.picker > .field:nth-child(1){ grid-column:span 7; }
+.picker > .field:nth-child(2){ grid-column:span 5; }
+.picker > .field:nth-child(3){ grid-column:span 7; }
+.picker > .field:nth-child(4){ grid-column:span 5; }
+.picker > .btn{ grid-column:1 / -1; min-height:46px; }
+.stepper{ width:100%; }
+.stepper input{ flex:1; width:auto; min-width:0; }
+
+/* Stock in form: three columns on laptops */
+#page-register .form-grid{ grid-template-columns:repeat(3,minmax(0,1fr)); }
+
+/* Modals never outgrow the screen */
+.modal-card{ max-height:calc(100vh - 36px); max-height:calc(100dvh - 36px); overflow-y:auto; }
+
+/* ---- Laptops (small): tighter sidebar ---- */
+@media (min-width:901px) and (max-width:1279px){
+  .sidebar{ width:208px; padding:22px 12px; }
+  main{ padding:24px 24px 44px; }
+}
+
+/* ---- Sell page: one column until there is room for two ---- */
+@media (max-width:1180px){
+  .sales-layout{ grid-template-columns:minmax(0,1fr); }
+  .sell-side{ position:static; }
+}
+@media (min-width:1181px){
+  .sales-layout{ grid-template-columns:minmax(0,1.6fr) minmax(320px,1fr); }
+  .sell-side{ top:24px; }
+}
+
+/* ---- Tablet & phone: top bar + bottom tab bar ---- */
+@media (max-width:900px){
+  body{ padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom)); }
+  .app.show{ flex-direction:column; min-height:0; }
+
+  .sidebar{
+    width:100%; height:auto; overflow:visible;
+    position:sticky; top:0; z-index:40;
+    flex-direction:row; align-items:center; justify-content:space-between; gap:10px;
+    padding:10px max(16px, env(safe-area-inset-right)) 10px max(16px, env(safe-area-inset-left));
+    padding-top:calc(10px + env(safe-area-inset-top));
+    border-right:0; border-bottom:1px solid var(--line); box-shadow:0 1px 8px rgba(36,24,25,.05);
+  }
+  .brand{ padding:0; font-size:1.1rem; }
+  .brand small{ font-size:.62rem; }
+
+  .sidebar-foot{ display:flex; align-items:center; gap:12px; margin:0; padding:0; border:0; min-width:0; }
+  .sidebar-user{ margin:0; font-size:.8rem; line-height:1.25; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .btn-password{ width:auto; margin:0; padding:7px 11px; font-size:.78rem; white-space:nowrap; }
+  .btn-logout{ margin:0; padding:7px 2px; font-size:.8rem; white-space:nowrap; }
+
+  nav{
+    position:fixed; left:0; right:0; bottom:0; z-index:50; margin:0;
+    flex-direction:row; gap:2px; background:var(--panel);
+    padding:6px max(6px, env(safe-area-inset-right)) calc(6px + env(safe-area-inset-bottom)) max(6px, env(safe-area-inset-left));
+    border-top:1px solid var(--line); box-shadow:0 -4px 16px rgba(36,24,25,.07);
+  }
+  nav button{
+    flex:1 1 0; min-width:0; min-height:calc(var(--nav-h) - 12px);
+    flex-direction:column; justify-content:center; gap:3px;
+    padding:5px 2px; font-size:.7rem; text-align:center; border-radius:10px; line-height:1.1;
+  }
+  nav button .ic{ width:22px; height:22px; }
+
+  main{ padding:18px max(16px, env(safe-area-inset-right)) 28px max(16px, env(safe-area-inset-left)); max-width:100%; }
+  .page-head{ align-items:flex-start; flex-direction:column; gap:3px; }
+  .page-head h1{ font-size:1.4rem; }
+
+  #homeCards{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .cards{ gap:12px; }
+
+  .site-header{ padding:16px 18px; }
+  .btn{ min-height:44px; }
+  .toast{ left:14px; right:14px; bottom:calc(var(--nav-h) + 14px + env(safe-area-inset-bottom)); max-width:none; }
+}
+
+/* ---- Phones ---- */
+@media (max-width:700px){
+  main{ padding-top:14px; }
+  .panel{ padding:15px; margin-bottom:14px; }
+  .card{ padding:14px; }
+  .card .value{ font-size:1.3rem; }
+
+  .site-header{ padding:14px; gap:12px; border-radius:12px; margin-bottom:16px; }
+  .site-header::after{ display:none; }
+  .logo-tile{ width:56px; height:56px; border-radius:14px; }
+  .header-main h1{ font-size:1.15rem; }
+  .header-main .tagline{ font-size:.78rem; }
+  .contact-strip{ gap:6px; margin-top:10px; }
+  .contact-strip a, .contact-strip span{ font-size:.72rem; padding:5px 10px; white-space:normal; }
+
+  /* Sell page picker: single column */
+  .picker{ grid-template-columns:1fr; gap:12px; }
+  .picker > .field:nth-child(n){ grid-column:1 / -1; }
+  .stepper button{ width:48px; height:46px; line-height:46px; }
+  .stepper input{ min-height:46px; }
+
+  #page-register .form-grid{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+
+  /* Tables -> stacked cards (labels are added from the column headings by script) */
+  .table-scroll{ overflow-x:visible; }
+  table:not(.stack){ min-width:0; }
+  table.stack{ min-width:0 !important; }
+  table.stack, table.stack tbody{ display:block; }
+  table.stack thead{ display:none; }
+  table.stack tr{
+    display:block; background:var(--panel); border:1px solid var(--line);
+    border-radius:12px; padding:10px 14px; margin-bottom:10px;
+  }
+  table.stack tbody tr:hover{ background:var(--panel); }
+  table.stack td{
+    display:flex; justify-content:space-between; align-items:center; gap:14px;
+    border:0; padding:5px 0; font-size:.9rem; text-align:right;
+  }
+  table.stack td[data-label]::before{
+    content:attr(data-label); color:var(--ink-soft); font-size:.78rem; text-align:left; flex-shrink:0;
+  }
+  table.stack td:first-child{
+    justify-content:flex-start; text-align:left; font-weight:600; font-size:.98rem;
+    padding-bottom:8px; margin-bottom:4px; border-bottom:1px solid var(--line);
+  }
+  table.stack td:first-child::before{ content:none; }
+  table.stack td[data-label="Action"],
+  table.stack td[data-label=""],
+  table.stack td.cart-remove{ justify-content:flex-end; padding-top:8px; }
+  table.stack td[data-label="Action"]::before,
+  table.stack td[data-label=""]::before{ content:none; }
+  table.stack td .btn{ min-height:40px; padding:8px 18px !important; font-size:.85rem !important; }
+  table.stack td.empty{
+    display:block; text-align:center; font-weight:400; font-size:.88rem;
+    border:0; margin:0; padding:10px 0;
+  }
+  table.stack tr.empty-row{ border:0; padding:0; background:none; }
+  #saleEditLines td select{ width:100% !important; max-width:none; }
+  #saleEditLines td input{ width:140px !important; }
+
+  /* Compact tables that stay as tables */
+  th, td{ padding:9px 7px; }
+  table{ font-size:.85rem; }
+
+  .bars{ gap:4px; height:150px; }
+  .bar-col{ min-width:30px; }
+}
+
+/* ---- Small phones ---- */
+@media (max-width:560px){
+  main{ padding-left:max(14px, env(safe-area-inset-left)); padding-right:max(14px, env(safe-area-inset-right)); }
+  .brand small{ display:none; }
+  .hide-sm{ display:none; }
+  .role-badge{ display:none; }
+  .sidebar-foot{ gap:10px; }
+  .sidebar-user{ max-width:28vw; }
+
+  #homeCards{ grid-template-columns:1fr; }
+  .cards{ grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+  #page-register .form-grid{ grid-template-columns:1fr; }
+  #regSubmit, #regNewProduct{ flex:1 1 100%; }
+
+  .filter-row .field, .filter-row .btn{ flex:1 1 100%; min-width:0 !important; }
+  .tabs{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+  .tabs button{ text-align:center; padding:11px 10px; }
+  #reportSpecificDateWrap label{ display:flex !important; flex-direction:column; align-items:stretch !important; gap:6px !important; }
+  #reportSpecificDateWrap input{ width:100% !important; }
+
+  .price-hint{ flex-direction:column; align-items:flex-start; }
+  .cart-total .value{ font-size:1.35rem; }
+
+  /* Modals become bottom sheets */
+  .modal-overlay, .modal-backdrop{ padding:0; align-items:flex-end; }
+  .modal-card{
+    width:100% !important; border-radius:18px 18px 0 0; padding:20px 16px calc(20px + env(safe-area-inset-bottom));
+    max-height:92vh !important; max-height:92dvh !important;
+  }
+  .modal-actions{ flex-direction:column-reverse; }
+  .modal-actions .btn{ flex:none; width:100%; min-height:46px; }
+}
+
+@media (max-width:380px){
+  .cards{ grid-template-columns:1fr; }
+}
+
+/* Landscape phones: keep the tab bar slim so content stays visible */
+@media (max-width:900px) and (max-height:480px){
+  :root{ --nav-h:52px; }
+  nav button{ flex-direction:row; gap:6px; font-size:.75rem; }
+  nav button .ic{ width:18px; height:18px; }
+}
 
 </style>
 </head>
@@ -451,16 +573,16 @@ input:focus,select:focus{box-shadow:0 0 0 3px rgba(142,27,31,.09)}
   <aside class="sidebar">
     <div class="brand">CJP<small>Chriz Jaal Park Co. Ltd</small></div>
     <nav>
-      <button data-page="home" class="active">Home</button>
-      <button data-page="register">Stock in</button>
-      <button data-page="sales">Sell</button>
-      <button data-page="products">Products</button>
-      <button data-page="reports">Reports</button>
+      <button data-page="home" class="active"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg><span>Home</span></button>
+      <button data-page="register"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg><span>Stock in</span></button>
+      <button data-page="sales"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.4 12.2a1 1 0 0 0 1 .8h9.2a1 1 0 0 0 1-.8L20 7H6"/></svg><span>Sell</span></button>
+      <button data-page="products"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span>Products</span></button>
+      <button data-page="reports"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20v-9M12 20V4M19 20v-6"/></svg><span>Reports</span></button>
     </nav>
     <div class="sidebar-foot">
       <div class="sidebar-user" id="sidebarUser">—</div>
       <input id="staffName" style="display:none;" />
-      <a class="btn-password" id="accountBtn" href="index.html">Account &amp; password</a>
+      <a class="btn-password" id="accountBtn" href="index.html">Account<span class="hide-sm"> &amp; password</span></a>
       <button class="btn-logout" id="logoutBtn">Log out</button>
     </div>
   </aside>
@@ -650,7 +772,7 @@ input:focus,select:focus{box-shadow:0 0 0 3px rgba(142,27,31,.09)}
       </div>
 
       <div class="panel">
-        <div style="display:flex; gap:12px; align-items:end; flex-wrap:wrap;">
+        <div class="filter-row" style="display:flex; gap:12px; align-items:end; flex-wrap:wrap;">
           <div class="field" style="min-width:170px;">
             <label for="productDetailDate">As at date</label>
             <input id="productDetailDate" type="date" />
@@ -782,7 +904,7 @@ input:focus,select:focus{box-shadow:0 0 0 3px rgba(142,27,31,.09)}
     <span class="sub">Amos admin password is required to save any correction.</span>
     <div class="warning-box"><strong>Precaution:</strong> The old stock will be restored and the corrected sale will then be applied.</div>
     <div id="saleEditMeta" class="muted" style="margin-bottom:12px;"></div>
-    <div class="table-scroll"><table style="min-width:650px;">
+    <div class="table-scroll"><table class="stack" style="min-width:650px;">
       <thead><tr><th>Product</th><th class="num">Qty</th><th class="num">Unit price</th><th></th></tr></thead>
       <tbody id="saleEditLines"></tbody>
     </table></div>
@@ -1007,13 +1129,17 @@ setInterval(()=>{
 
 /* ======================= home: dashboard ======================= */
 function stockTotals(){
-  let qty=0, cost=0;
+  let qty=0, cost=0, wholesaleValue=0;
   productsCache.forEach(p=>{
-    qty += Number(p.stock)||0;
-    cost += (Number(p.stock)||0) * (Number(p.buyPrice)||0);
+    const stock = Number(p.stock)||0;
+    const buy = Number(p.buyPrice)||0;
+    const wholesale = Number(p.wholesalePrice)||0;
+    qty += stock;
+    cost += stock * buy;
+    wholesaleValue += stock * wholesale;
   });
-  const profit = productsCache.reduce((sum,p)=>sum + (Number(p.stock)||0) * ((Number(p.wholesalePrice)||0) - (Number(p.buyPrice)||0)), 0);
-  return {qty, cost, profit};
+  const profit = wholesaleValue - cost;
+  return {qty, cost, wholesaleValue, profit};
 }
 
 async function loadDashboard(){
@@ -1030,7 +1156,8 @@ async function loadDashboard(){
       <div class="value">${money(st.qty)}</div>
       <div class="dashboard-details">
         <div class="dashboard-detail detail-cost"><span class="detail-label">Value at cost:</span><span class="detail-value">${money(st.cost)}</span></div>
-        <div class="dashboard-detail detail-profit"><span class="detail-label">Profit:</span><span class="detail-value">${money(st.profit)}</span></div>
+        <div class="dashboard-detail detail-unit"><span class="detail-label">Wholesale value:</span><span class="detail-value">${money(st.wholesaleValue)}</span></div>
+        <div class="dashboard-detail detail-profit"><span class="detail-label">Expected profit:</span><span class="detail-value">${money(st.profit)}</span></div>
         <div class="dashboard-detail detail-unit"><span class="detail-label">Unit:</span><span class="detail-value">${money(st.qty)}</span></div>
       </div>
     </div>
@@ -1678,5 +1805,25 @@ async function loadReports(period, selectedDate){
 })();
 </script>
 <script>(function(){try{const bg=localStorage.getItem('cjp_local_background');if(bg)document.documentElement.style.setProperty('--local-app-bg','url("'+bg.replace(/"/g,'\\"')+'")')}catch(e){}})();</script>
+<script>
+/* Responsive tables: copy each column heading onto its cells (data-label) so rows can
+   stack as cards on phones. Re-runs automatically whenever a table body is re-rendered. */
+(function(){
+  function label(table){
+    var heads = Array.prototype.map.call(table.querySelectorAll('thead th'), function(th){ return th.textContent.trim(); });
+    table.querySelectorAll('tbody tr').forEach(function(tr){
+      var cells = Array.prototype.slice.call(tr.children);
+      if(cells.length !== heads.length) return;              // skip "empty" / colspan rows
+      cells.forEach(function(td,i){ if(!td.hasAttribute('data-label')) td.setAttribute('data-label', heads[i]); });
+    });
+  }
+  document.querySelectorAll('table').forEach(function(t){
+    if(!t.tHead || !t.tBodies[0]) return;
+    if(t.tHead.querySelectorAll('th').length >= 5) t.classList.add('stack');
+    label(t);
+    new MutationObserver(function(){ label(t); }).observe(t.tBodies[0], {childList:true});
+  });
+})();
+</script>
 </body>
 </html>
