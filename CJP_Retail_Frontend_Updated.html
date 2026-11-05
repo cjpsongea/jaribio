@@ -564,6 +564,45 @@ input[type="radio"], input[type="checkbox"]{
   nav button .ic{ width:18px; height:18px; }
 }
 
+
+/* Report history trend */
+.trend-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.trend-head h3{margin:0}
+.trend-controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.trend-controls select{width:auto;min-width:150px}
+.trend-seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.trend-seg button{all:unset;cursor:pointer;padding:7px 14px;font-size:.84rem;color:var(--ink-soft)}
+.trend-seg button.active{background:var(--ink);color:#fff}
+.trend-legend{display:flex;gap:16px;font-size:.78rem;color:var(--ink-soft);margin:4px 0 6px}
+.trend-legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.trend-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.trend-scroll svg{display:block}
+.trend-col{cursor:pointer}
+.trend-col:hover .trend-hit{fill:rgba(142,27,31,.07)}
+.trend-hit{fill:transparent}
+.trend-col.sel .trend-hit{fill:rgba(142,27,31,.12)}
+.trend-note{font-size:.76rem;color:var(--ink-soft);margin:6px 0 0}
+/* Historical reports: compact controls and responsive visual chart */
+.report-period-tabs{gap:8px}
+.report-date-picker{margin:10px 0 18px;padding:14px 16px;background:var(--panel);border:1px solid var(--line);border-radius:12px}
+.report-date-picker label{display:block;font-size:.84rem;font-weight:600;margin-bottom:8px}
+.report-date-controls{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+.report-date-controls input{width:auto;min-width:180px}
+.report-date-picker small{display:block;color:var(--ink-soft);font-size:.75rem;margin-top:8px}
+#reportBars{min-height:170px;gap:clamp(3px,1vw,10px);padding-top:12px}
+#reportBars .bar-col{min-width:0;gap:5px}
+#reportBars .bar{min-height:3px;max-width:46px;transition:height .2s ease}
+#reportBars .bar-label{font-size:clamp(.58rem,1.1vw,.72rem);overflow:hidden;text-overflow:ellipsis;max-width:100%}
+#reportBars .bar-value{font-size:.64rem;color:var(--ink-soft);white-space:nowrap}
+.report-loading{opacity:.62;pointer-events:none}
+@media(max-width:560px){
+ .report-period-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+ .report-period-tabs button{min-width:0;text-align:center;padding:10px 7px}
+ .report-date-controls{display:grid;grid-template-columns:1fr}
+ .report-date-controls input{width:100%}
+ .report-date-controls .btn{width:100%}
+}
+
 </style>
 </head>
 <body>
@@ -803,17 +842,48 @@ input[type="radio"], input[type="checkbox"]{
         <span class="muted" id="reportRange"></span>
       </div>
 
-      <div class="tabs">
+      <div class="tabs report-period-tabs" aria-label="Choose report period">
         <button data-period="day" class="active">Today</button>
         <button data-period="week">This week</button>
+        <button data-period="previousWeek">Previous week</button>
         <button data-period="month">This month</button>
-        <button data-period="specific">Specific date</button>
+        <button data-period="previousMonth">Previous month</button>
+        <button data-period="specific">Choose date</button>
+        <button data-period="specificMonth">Choose month</button>
       </div>
-      <div id="reportSpecificDateWrap" style="display:none; margin:10px 0 16px;">
-        <label style="display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:0.9rem;">
-          Select date
-          <input type="date" id="reportSpecificDate" style="width:auto;">
-        </label>
+      <div id="reportSpecificDateWrap" class="report-date-picker" style="display:none;">
+        <label for="reportSpecificDate">Choose the day you want to review</label>
+        <div class="report-date-controls">
+          <input type="date" id="reportSpecificDate">
+          <button type="button" class="btn btn-ghost" id="reportApplyDate">View selected day</button>
+        </div>
+        <small>For whole weeks or months use the Sales trend chart above.</small>
+      </div>
+
+      <div id="reportMonthWrap" class="report-date-picker" style="display:none;">
+        <label for="reportMonthInput">Choose the month you want to review</label>
+        <div class="report-date-controls">
+          <input type="month" id="reportMonthInput" placeholder="YYYY-MM" pattern="[0-9]{4}-[0-9]{2}">
+          <button type="button" class="btn btn-ghost" id="reportMonthApply">View selected month</button>
+        </div>
+        <small>Shows all sales of that whole month, with daily graph and product breakdown.</small>
+      </div>
+
+      <div class="panel" id="trendPanel">
+        <div class="trend-head">
+          <h3>Sales trend (history)</h3>
+          <div class="trend-controls">
+            <div class="trend-seg" id="trendSeg">
+              <button type="button" data-g="week" class="active">Weeks</button>
+              <button type="button" data-g="month">Months</button>
+            </div>
+            <select id="trendCount" aria-label="How many periods to show"></select>
+            <select id="trendPick" aria-label="Open a specific week or month"></select>
+          </div>
+        </div>
+        <div class="trend-legend"><span><i style="background:var(--accent)"></i>Revenue</span><span><i style="background:#2E7D5B"></i>Profit</span></div>
+        <div class="trend-scroll"><div id="trendChart"><div class="empty">Loading…</div></div></div>
+        <p class="trend-note">Tap a bar (or choose from the list) to open that week/month with its daily graph and product breakdown. Past records are only read, never changed.</p>
       </div>
 
       <div class="cards" id="reportCards"></div>
@@ -976,6 +1046,7 @@ function enterApp(session){
   loadDashboard();
   loadProducts();
   loadReports(currentPeriod);
+  loadTrend();
 }
 
 /* ======================= company header ======================= */
@@ -1090,7 +1161,7 @@ document.querySelectorAll('nav button').forEach(btn=>{
     if(btn.dataset.page==='register') loadProducts();
     if(btn.dataset.page==='sales') loadProducts();
     if(btn.dataset.page==='products') { loadProducts(); loadProductDetails(); }
-    if(btn.dataset.page==='reports') loadReports(currentPeriod);
+    if(btn.dataset.page==='reports') { loadReports(currentPeriod); loadTrend(); }
   });
 });
 
@@ -1738,59 +1809,234 @@ document.getElementById('checkoutBtn').addEventListener('click', async ()=>{
 let currentPeriod = 'day';
 const reportSpecificDateWrap = document.getElementById('reportSpecificDateWrap');
 const reportSpecificDate = document.getElementById('reportSpecificDate');
+const reportApplyDate = document.getElementById('reportApplyDate');
+let reportRequestVersion = 0;
+const reportCache = new Map();
+const REPORT_CACHE_MS = 20000;
 
-document.querySelectorAll('.tabs button').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    currentPeriod = btn.dataset.period;
+function reportIsoLocal(date){
+  const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,'0'),d=String(date.getDate()).padStart(2,'0');
+  return `${y}-${m}-${d}`;
+}
+function reportAnchor(period){
+  const now=new Date();
+  if(period==='previousWeek'){
+    return reportIsoLocal(new Date(now.getFullYear(),now.getMonth(),now.getDate()-7));
+  }
+  if(period==='previousMonth') return reportIsoLocal(new Date(now.getFullYear(),now.getMonth()-1,1));
+  return reportIsoLocal(now);
+}
+function reportApiPeriod(period){
+  return (period==='previousWeek'||period==='trendWeek')?'week':(period==='previousMonth'||period==='trendMonth'||period==='specificMonth')?'month':period;
+}
+function reportLabel(period){
+  return ({day:'Today',week:'This week',previousWeek:'Previous week',month:'This month',previousMonth:'Previous month',specific:'Selected date',trendWeek:'Week',trendMonth:'Month',specificMonth:'Selected month'})[period]||'Report';
+}
 
-    if(currentPeriod === 'specific'){
-      reportSpecificDateWrap.style.display = 'block';
-      if(!reportSpecificDate.value) reportSpecificDate.value = todayISO();
-      loadReports(currentPeriod, reportSpecificDate.value);
-    } else {
-      reportSpecificDateWrap.style.display = 'none';
+document.querySelectorAll('.tabs button[data-period]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.tabs button[data-period]').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active'); currentPeriod=btn.dataset.period; trendSelected=''; if(typeof renderTrend==='function'&&trendData.length) renderTrend();
+    const monthWrap=document.getElementById('reportMonthWrap'), monthInput=document.getElementById('reportMonthInput');
+    if(currentPeriod==='specificMonth'){
+      reportSpecificDateWrap.style.display='none'; monthWrap.style.display='block';
+      if(!monthInput.value) monthInput.value=todayISO().slice(0,7);
+      loadReports('specificMonth',monthInput.value+'-01');
+    }else if(currentPeriod==='specific'){
+      monthWrap.style.display='none';
+      reportSpecificDateWrap.style.display='block';
+      if(!reportSpecificDate.value) reportSpecificDate.value=todayISO();
+      loadReports('specific',reportSpecificDate.value);
+    }else{
+      monthWrap.style.display='none';
+      reportSpecificDateWrap.style.display='none';
       loadReports(currentPeriod);
     }
   });
 });
-
-reportSpecificDate.addEventListener('change', ()=>{
-  if(currentPeriod === 'specific' && reportSpecificDate.value){
-    loadReports('specific', reportSpecificDate.value);
-  }
+if(reportApplyDate) reportApplyDate.addEventListener('click',()=>{
+  if(reportSpecificDate.value) loadReports('specific',reportSpecificDate.value);
+});
+(function(){
+  const mi=document.getElementById('reportMonthInput'), mb=document.getElementById('reportMonthApply');
+  const go=()=>{ if(currentPeriod==='specificMonth' && /^\d{4}-\d{2}$/.test(mi.value)) loadReports('specificMonth',mi.value+'-01'); else if(!/^\d{4}-\d{2}$/.test(mi.value)) showToast('Choose a month to view its report.',true); };
+  mb.addEventListener('click',go); mi.addEventListener('change',go);
+})();
+reportSpecificDate.addEventListener('change',()=>{
+  if(currentPeriod==='specific' && reportSpecificDate.value) loadReports('specific',reportSpecificDate.value);
 });
 
-async function loadReports(period, selectedDate){
+async function loadReports(period,selectedDate){
   if(!currentSession) return;
-  const params = {period, customerType:'retail'};
-  if(period === 'specific'){
-    const date = selectedDate || reportSpecificDate.value;
-    if(!date){ showToast('Pick a date to see that day’s report.', true); return; }
-    params.date = date;
+  const version=++reportRequestVersion;
+  const params={period:reportApiPeriod(period),customerType:'retail'};
+  if(period==='specific'){
+    const date=selectedDate||reportSpecificDate.value;
+    if(!date){showToast('Choose a date to view its report.',true);return;}
+    params.period='specific'; params.date=date;
+  }else if(period==='specificMonth'){
+    const m=String(selectedDate||'').slice(0,7);
+    if(!/^\d{4}-\d{2}$/.test(m)){showToast('Choose a month to view its report.',true);return;}
+    params.period='month'; params.date=m+'-01';
+  }else if(period==='trendWeek'||period==='trendMonth'){
+    params.date=selectedDate;
+  }else if(period==='previousWeek'||period==='previousMonth'){
+    // Date anchor requests the historical week/month while preserving the existing API.
+    params.date=reportAnchor(period);
   }
-  const r = await apiGet('reports', params);
-  if(!r.ok){ showToast(r.error||'The report could not load. Try again.', true); return; }
-  const d = r.data;
-  document.getElementById('reportRange').textContent = `${d.rangeStart} → ${d.rangeEnd}`;
-  document.getElementById('reportCards').innerHTML = `
+  const cacheKey=JSON.stringify(params);
+  const cached=reportCache.get(cacheKey);
+  let d;
+  if(cached && Date.now()-cached.at<REPORT_CACHE_MS) d=cached.data;
+  else{
+    const page=document.getElementById('page-reports');
+    page.classList.add('report-loading');
+    try{
+      const r=await apiGet('reports',params);
+      if(version!==reportRequestVersion) return;
+      if(!r.ok){showToast(r.error||'The report could not load. Try again.',true);return;}
+      d=r.data; reportCache.set(cacheKey,{at:Date.now(),data:d});
+    }catch(err){
+      if(version===reportRequestVersion) showToast(err.message||'Network error while loading report.',true);
+      return;
+    }finally{
+      if(version===reportRequestVersion) page.classList.remove('report-loading');
+    }
+  }
+  if(version!==reportRequestVersion) return;
+  document.getElementById('reportRange').textContent=`${reportLabel(period)} · ${d.rangeStart} → ${d.rangeEnd}`;
+  document.getElementById('reportCards').innerHTML=`
     <div class="card"><div class="label">Retail revenue</div><div class="value">${money(d.revenue)}</div></div>
     <div class="card"><div class="label">Retail profit</div><div class="value">${money(d.profit)}</div></div>
-    <div class="card"><div class="label">Units sold</div><div class="value">${money(d.qtySold || 0)}</div></div>`;
+    <div class="card"><div class="label">Units sold</div><div class="value">${money(d.qtySold||0)}</div></div>`;
+  const bars=document.getElementById('reportBars');
+  const daily=fillDailyGaps(Array.isArray(d.daily)?d.daily:[],d.rangeStart,d.rangeEnd);
+  const max=Math.max(1,...daily.map(x=>Number(x.revenue)||0));
+  bars.innerHTML=daily.some(x=>Number(x.revenue)>0)?daily.map(x=>{
+    const value=Number(x.revenue)||0, height=Math.max(2,value/max*100), label=String(x.date||'').slice(5);
+    return `<div class="bar-col" title="${label} · ${money(value)}">
+      <div class="bar-value">${money(value)}</div>
+      <div class="bar" style="height:${height}%" aria-label="${label} revenue ${money(value)}"></div>
+      <div class="bar-label">${label}</div>
+    </div>`;
+  }).join(''):'<div class="empty">No sales recorded in this period yet.</div>';
+  const byP=document.getElementById('reportByProduct');
+  const products=Array.isArray(d.byProduct)?d.byProduct:[];
+  byP.innerHTML=products.length?products.map(p=>`
+    <tr><td>${String(p.name||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}</td><td class="num">${money(p.qty)}</td><td class="num">${money(p.revenue)}</td><td class="num">${money(p.profit)}</td></tr>`).join('')
+    :'<tr><td colspan="4" class="empty">No sales recorded in this period yet.</td></tr>';
+}
 
-  const bars = document.getElementById('reportBars');
-  const max = Math.max(1, ...d.daily.map(x=>x.revenue));
-  bars.innerHTML = d.daily.length ? d.daily.map(x=>`
-    <div class="bar-col">
-      <div class="bar" style="height:${Math.max(2, x.revenue/max*100)}%" title="${money(x.revenue)}"></div>
-      <div class="bar-label">${x.date.slice(5)}</div>
-    </div>`).join('') : '<div class="empty">No sales recorded in this period yet.</div>';
+/* ---- report history: gaps + trend chart (read-only) ---- */
+function fillDailyGaps(daily,startStr,endStr){
+  if(!startStr||!endStr) return daily;
+  const map={}; daily.forEach(x=>{map[x.date]=Number(x.revenue)||0;});
+  const out=[]; const a=new Date(startStr+'T12:00:00'), b=new Date(endStr+'T12:00:00');
+  if(isNaN(a)||isNaN(b)||b<a||(b-a)/864e5>62) return daily;
+  for(let d=new Date(a); d<=b; d.setDate(d.getDate()+1)){
+    const k=reportIsoLocal(d); out.push({date:k,revenue:map[k]||0});
+  }
+  return out;
+}
+const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+let trendG='week', trendData=[], trendSelected='';
+const trendCache=new Map();
+function shortMoney(n){
+  n=Number(n)||0; const a=Math.abs(n);
+  if(a>=1e6) return (n/1e6).toFixed(a>=1e7?0:1).replace(/\.0$/,'')+'M';
+  if(a>=1e3) return (n/1e3).toFixed(a>=1e4?0:1).replace(/\.0$/,'')+'K';
+  return String(Math.round(n));
+}
+function escHtml(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function trendLabel(t){
+  const [y,m,d]=t.startLabel.split('-').map(Number);
+  return trendG==='month' ? MONTHS[m-1]+" '"+String(y).slice(2) : String(d).padStart(2,'0')+' '+MONTHS[m-1];
+}
+function trendLong(t){
+  return trendG==='month' ? trendLabel(t) : t.startLabel+' → '+t.endLabel;
+}
+(function initTrendControls(){
+  const cnt=document.getElementById('trendCount');
+  if(!cnt) return;
+  function fillCount(){
+    const opts=trendG==='week'?[8,12,26,52]:[6,12,24,36];
+    const unit=trendG==='week'?'weeks':'months';
+    cnt.innerHTML=opts.map(n=>`<option value="${n}">Last ${n} ${unit}</option>`).join('');
+    cnt.value=String(trendG==='week'?12:12);
+  }
+  fillCount();
+  document.querySelectorAll('#trendSeg button').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#trendSeg button').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active'); trendG=b.dataset.g; trendSelected=''; fillCount(); loadTrend();
+  }));
+  cnt.addEventListener('change',()=>loadTrend());
+  document.getElementById('trendPick').addEventListener('change',e=>{
+    if(e.target.value) openTrendPeriod(e.target.value);
+  });
+})();
 
-  const byP = document.getElementById('reportByProduct');
-  byP.innerHTML = d.byProduct.length ? d.byProduct.map(p=>`
-    <tr><td>${p.name}</td><td class="num">${p.qty}</td><td class="num">${money(p.revenue)}</td><td class="num">${money(p.profit)}</td></tr>`).join('')
-    : '<tr><td colspan="4" class="empty">No sales recorded in this period yet.</td></tr>';
+function openTrendPeriod(startLabel){
+  trendSelected=startLabel;
+  document.querySelectorAll('.tabs button[data-period]').forEach(b=>b.classList.remove('active'));
+  reportSpecificDateWrap.style.display='none';
+  document.getElementById('reportMonthWrap').style.display='none';
+  currentPeriod=trendG==='month'?'trendMonth':'trendWeek';
+  renderTrend();
+  loadReports(currentPeriod,startLabel);
+  const pick=document.getElementById('trendPick'); if(pick) pick.value=startLabel;
+}
+
+async function loadTrend(){
+  if(!currentSession) return;
+  const count=document.getElementById('trendCount').value;
+  const box=document.getElementById('trendChart');
+  const key=trendG+':'+count;
+  const c=trendCache.get(key);
+  if(c && Date.now()-c.at<REPORT_CACHE_MS){ trendData=c.data; renderTrend(); return; }
+  box.innerHTML='<div class="empty">Loading…</div>';
+  try{
+    const r=await apiGet('trend',{granularity:trendG,count:count});
+    if(!r.ok){ box.innerHTML='<div class="empty">'+escHtml(r.error||'Trend could not load.')+'</div>'; return; }
+    trendData=Array.isArray(r.data)?r.data:[];
+    trendCache.set(key,{at:Date.now(),data:trendData});
+    renderTrend();
+  }catch(err){
+    box.innerHTML='<div class="empty">'+escHtml(err.message||'Network error while loading trend.')+'</div>';
+  }
+}
+
+function renderTrend(){
+  const box=document.getElementById('trendChart'), pick=document.getElementById('trendPick');
+  const data=trendData;
+  if(!data.length){ box.innerHTML='<div class="empty">No data yet.</div>'; return; }
+  pick.innerHTML='<option value="">Open a '+(trendG==='week'?'week':'month')+'…</option>'+
+    data.slice().reverse().map(t=>`<option value="${t.startLabel}">${escHtml(trendLong(t))} · ${shortMoney(t.revenue)}</option>`).join('');
+  pick.value=trendSelected||'';
+  const max=Math.max(1,...data.map(t=>Math.max(Number(t.revenue)||0,Number(t.profit)||0)));
+  const colW=data.length>12?54:64, padL=44, padT=14, padB=34, H=230, plotH=H-padT-padB;
+  const W=padL+colW*data.length+8;
+  const y=v=>padT+plotH-(Math.max(0,v)/max)*plotH;
+  let g='';
+  for(let i=0;i<=3;i++){
+    const v=max*i/3, yy=y(v);
+    g+=`<line x1="${padL}" x2="${W-4}" y1="${yy}" y2="${yy}" stroke="var(--line)" stroke-width="1"/>`+
+       `<text x="${padL-6}" y="${yy+3}" text-anchor="end" font-size="9" fill="var(--ink-soft)">${shortMoney(v)}</text>`;
+  }
+  data.forEach((t,i)=>{
+    const x0=padL+i*colW, bw=Math.min(18,(colW-14)/2), cx=x0+colW/2;
+    const rev=Number(t.revenue)||0, prof=Number(t.profit)||0;
+    const sel=trendSelected===t.startLabel;
+    g+=`<g class="trend-col${sel?' sel':''}" data-start="${t.startLabel}">
+      <title>${escHtml(trendLong(t))} · Revenue ${money(rev)} · Profit ${money(prof)} · ${money(t.qtySold||0)} units · ${t.salesCount||0} sales</title>
+      <rect class="trend-hit" x="${x0}" y="${padT}" width="${colW}" height="${plotH+padB}"/>
+      <rect x="${cx-bw-1}" y="${y(rev)}" width="${bw}" height="${Math.max(1,padT+plotH-y(rev))}" rx="3" fill="var(--accent)"/>
+      <rect x="${cx+1}" y="${y(prof)}" width="${bw}" height="${Math.max(1,padT+plotH-y(prof))}" rx="3" fill="#2E7D5B"/>
+      <text x="${cx}" y="${H-padB+14}" text-anchor="middle" font-size="9.5" fill="var(--ink-soft)">${escHtml(trendLabel(t))}</text>
+      <text x="${cx}" y="${y(Math.max(rev,prof))-4}" text-anchor="middle" font-size="8.5" fill="var(--ink)">${rev>0?shortMoney(rev):''}</text>
+    </g>`;
+  });
+  box.innerHTML=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Revenue and profit trend">${g}</svg>`;
+  box.querySelectorAll('.trend-col').forEach(el=>el.addEventListener('click',()=>openTrendPeriod(el.dataset.start)));
 }
 
 /* ======================= init ======================= */
