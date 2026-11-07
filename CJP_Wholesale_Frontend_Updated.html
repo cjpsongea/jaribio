@@ -1172,10 +1172,19 @@ function stockTotals(){
 }
 
 async function loadDashboard(){
+  try{ await loadDashboardInner(); }
+  catch(e){ showToast((e&&e.message)||'The dashboard could not load. Check the connection and try again.', true); }
+}
+async function loadDashboardInner(){
   if(!currentSession) return;
   const r = await apiGet('dashboard', {customerType:'wholesale'});
   if(!r.ok){ showToast(r.error||'The dashboard could not load. Check the connection and try again.', true); return; }
   const d = r.data;
+  if(!d.version){
+    showToast('The Apps Script backend is OUTDATED. In Apps Script: Deploy > Manage deployments > Edit > New version > Deploy.', true);
+  } else if(d.undatedLines>0){
+    showToast(d.undatedLines+' sale line(s) have an unreadable date and are missing from today/week/month. Run runDiagnostics in Apps Script.', true);
+  }
   const st = stockTotals();
   const cards = document.getElementById('homeCards');
   cards.innerHTML = `
@@ -1315,7 +1324,7 @@ document.getElementById('confirmSaleEdit').addEventListener('click',async()=>{
     });
     if(!r.ok){showToast(r.error||'Sale was not changed.',true);return;}
     closeSaleEdit();showToast(`Sale ${r.saleId} updated successfully.`);
-    await loadProducts();await loadDashboard();
+    reportCache.clear();await loadProducts();await loadDashboard();loadReports();
   }catch(e){showToast(e.message || 'Could not save the corrected sale.',true);}
   finally{btn.disabled=false;btn.textContent='Confirm & Save correction';}
 });
@@ -1323,6 +1332,10 @@ document.getElementById('confirmSaleEdit').addEventListener('click',async()=>{
 /* ======================= products ======================= */
 let productsCache = [];
 async function loadProducts(){
+  try{ await loadProductsInner(); }
+  catch(e){ showToast((e&&e.message)||'Products could not load. Check the connection and try again.', true); }
+}
+async function loadProductsInner(){
   const r = await apiGet('products');
   if(!r.ok){ showToast(r.error||'Products could not load. Check the connection and try again.', true); return; }
   productsCache = r.products;
@@ -1416,7 +1429,7 @@ async function confirmProductEdit(){
   if(!Number.isFinite(buyPrice) || buyPrice < 0 || !Number.isFinite(wholesalePrice) || wholesalePrice < 0){
     showToast('Enter valid non-negative prices.', true); return;
   }
-  if(!password){ showToast('Enter your login password to continue.', true); return; }
+  if(!password){ showToast('Enter the Amos admin password to continue.', true); return; }
 
   const btn = document.getElementById('confirmProductEdit');
   btn.setAttribute('disabled','');
@@ -1755,7 +1768,10 @@ document.getElementById('checkoutBtn').addEventListener('click', async ()=>{
       </div>`;
     cart = [];
     renderCart();
+    reportCache.clear();
     loadProducts();
+    loadDashboard();
+    loadReports();
   } catch(err) {
     showToast(err?.message || 'The sale did not go through. Try again.', true);
   } finally {
