@@ -1118,8 +1118,8 @@ document.querySelectorAll('nav button').forEach(btn=>{
     if(btn.dataset.page==='home') loadDashboard();
     if(btn.dataset.page==='register') loadProducts();
     if(btn.dataset.page==='sales') loadProducts();
-    if(btn.dataset.page==='products') { loadProducts(); loadProductDetails(); }
-    if(btn.dataset.page==='reports') { loadReports(); }
+    if(btn.dataset.page==='products') { loadProducts().then(loadProductDetails); }
+    if(btn.dataset.page==='reports') { reportCache.clear(); loadReports(); }
   });
 });
 
@@ -1171,13 +1171,43 @@ function stockTotals(){
   return {qty, cost, retailValue, profit};
 }
 
+function showDashboardError(msg){
+  const cards = document.getElementById('homeCards');
+  if(cards) cards.innerHTML = `<div class="card" style="grid-column:1/-1;border-left:4px solid #B3261E"><div class="label">Dashboard haikupakia</div><div class="sub" style="white-space:normal">${escHtml(msg)}</div><div style="margin-top:10px"><button class="btn btn-ghost" id="dashRetry">Jaribu tena</button></div></div>`;
+  const b = document.getElementById('dashRetry'); if(b) b.addEventListener('click', ()=>loadDashboard());
+  showToast(msg, true);
+}
+
 async function loadDashboard(){
   if(!currentSession) return;
-  const r = await apiGet('dashboard', {customerType:'retail'});
-  if(!r.ok){ showToast(r.error||'The dashboard could not load. Check the connection and try again.', true); return; }
+  let r;
+  try{
+    r = await apiGet('dashboard', {customerType:'retail'});
+  }catch(err){
+    showDashboardError(err && err.message ? err.message : 'Dashboard could not load. Check the connection.');
+    return;
+  }
+  if(!r.ok){ if(r.auth!==false) showDashboardError(r.error||'The dashboard could not load. Check the connection and try again.'); return; }
   const d = r.data;
-  const st = stockTotals();
+  // Use the products that came WITH the dashboard (productsCache may still be empty on first load).
+  const st = (function(){
+    let qty=0, cost=0, retailValue=0;
+    (d.products||[]).forEach(p=>{
+      const stock=Number(p.stock)||0;
+      qty+=stock; cost+=stock*(Number(p.buyPrice)||0); retailValue+=stock*(Number(p.retailPrice)||0);
+    });
+    return {qty, cost, retailValue, profit: retailValue-cost};
+  })();
   const cards = document.getElementById('homeCards');
+  // Data-health warning (only shown when Sales / SaleLines do not agree)
+  let hb = document.getElementById('dashHealth');
+  if(!hb){ hb = document.createElement('div'); hb.id='dashHealth'; cards.parentNode.insertBefore(hb, cards); }
+  const h = d.health || {};
+  const problems = [];
+  if(h.badTimestamps>0) problems.push(`${h.badTimestamps} row(s) in Sales/SaleLines have an unreadable date and are not counted.`);
+  if(h.salesRows>0 && h.lineRows===0) problems.push('Sales exist but the SaleLines sheet is empty, so reports show nothing.');
+  else if(h.salesRows>h.saleIdsInLines) problems.push(`${h.salesRows-h.saleIdsInLines} sale(s) have no matching lines in SaleLines (they appear in history but not in reports).`);
+  hb.innerHTML = problems.length ? `<div class="card" style="margin-bottom:12px;border-left:4px solid #B3261E"><div class="label">Angalizo la data</div><div class="sub" style="white-space:normal">${problems.map(escHtml).join('<br>')}</div></div>` : '';
   cards.innerHTML = `
     <div class="card"><div class="label">Products tracked</div><div class="value">${d.products.length}</div><div class="sub">${d.lowStock.length} running low</div></div>
     <div class="card">
@@ -1315,6 +1345,7 @@ document.getElementById('confirmSaleEdit').addEventListener('click',async()=>{
     });
     if(!r.ok){showToast(r.error||'Sale was not changed.',true);return;}
     closeSaleEdit();showToast(`Sale ${r.saleId} updated successfully.`);
+    reportCache.clear();
     await loadProducts();await loadDashboard();
   }catch(e){showToast(e.message || 'Could not save the corrected sale.',true);}
   finally{btn.disabled=false;btn.textContent='Confirm & Save correction';}
@@ -1323,7 +1354,9 @@ document.getElementById('confirmSaleEdit').addEventListener('click',async()=>{
 /* ======================= products ======================= */
 let productsCache = [];
 async function loadProducts(){
-  const r = await apiGet('products');
+  let r;
+  try{ r = await apiGet('products'); }
+  catch(err){ showToast(err && err.message ? err.message : 'Products could not load. Check the connection.', true); return; }
   if(!r.ok){ showToast(r.error||'Products could not load. Check the connection and try again.', true); return; }
   productsCache = r.products;
 
@@ -1582,7 +1615,7 @@ function todayISO(){
   return local.toISOString().slice(0,10);
 }
 document.getElementById('productDetailDate').value = todayISO();
-document.getElementById('refreshProductsDetail').addEventListener('click', loadProductDetails);
+document.getElementById('refreshProductsDetail').addEventListener('click', ()=>loadProducts().then(loadProductDetails));
 
 function loadProductDetails(){
   const date = document.getElementById('productDetailDate').value || todayISO();
@@ -1755,7 +1788,9 @@ document.getElementById('checkoutBtn').addEventListener('click', async ()=>{
       </div>`;
     cart = [];
     renderCart();
+    reportCache.clear();          // a new sale must show in reports immediately
     loadProducts();
+    loadDashboard();
   } catch(err) {
     showToast(err?.message || 'The sale did not go through. Try again.', true);
   } finally {
